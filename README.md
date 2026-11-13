@@ -17,4 +17,4 @@ If the game isn't at the default macOS Steam path, create `local.properties`:
 mindustryJar=/path/to/Mindustry/desktop.jar
 ```
 
-See [docs/DESIGN.md](docs/DESIGN.md) for the design plan.
+See [docs/OVERVIEW.md](docs/OVERVIEW.md) for everything in the mod so far, and [docs/DESIGN.md](docs/DESIGN.md) for the design plan.
