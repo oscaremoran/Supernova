@@ -32,15 +32,15 @@
 |---|---|---|---|
 | 1 | **Ferrite** ✅ | Surface ore | Basic construction, walls, conveyors |
 | 1 | **Cobaltine** ✅ | Surface ore (harder) | Power, wiring, early electronics |
-| 1 | **Quartzite** | Surface sand/rock | Glass, refining flux |
-| 2 | **Ferrosteel** | Smelter: ferrite + quartzite | Structural tier 2 and turrets |
-| 2 | **Iridium** | **Belt only** (metallic asteroids) | Hard alloys, drill heads, armor |
-| 2 | **Cryo-Ice** | **Belt only** (icy asteroids) | Melted into Volatiles |
-| 3 | **Conductium** | Fabricator: cobaltine + iridium | Advanced electronics, logic, shields |
-| 3 | **Novium** | **Belt only**, rare | Endgame power and weapons |
-| 4 | **Singularity Composite** | Ferrosteel + conductium + novium | Top-tier units, cores, superweapons |
+| 1 | **Quartzite** ✅ | Surface sand/rock | Glass, refining flux |
+| 2 | **Ferrosteel** ✅ | Smelter: ferrite + quartzite | Structural tier 2 and turrets |
+| 2 | **Iridium** ✅ | **Belt only** (metallic asteroids) | Hard alloys, drill heads, armor |
+| 2 | **Cryo-Ice** ✅ | **Belt only** (icy asteroids) | Melted into Volatiles |
+| 3 | **Conductium** ✅ | Fabricator: cobaltine + iridium | Advanced electronics, logic, shields |
+| 3 | **Novium** ✅ | **Belt only**, rare | Endgame power and weapons |
+| 4 | **Singularity Composite** ✅ | Ferrosteel + conductium + novium | Top-tier units, cores, superweapons |
 
-**Fluid: Volatiles** (from Cryo-Ice). Used as propellant for orbital missions and as fuel and coolant. This creates the core loop: **the belt pays for itself**. Ice from orbit becomes the propellant for the next launch.
+**Fluid: Volatiles** ✅ (from Cryo-Ice). Used as propellant for orbital missions and as fuel and coolant. This creates the core loop: **the belt pays for itself**. Ice from orbit becomes the propellant for the next launch.
 
 ✅ = implemented.
 
@@ -95,8 +95,8 @@
 
 | # | Milestone | Status |
 |---|---|---|
-| M0 | Gradle skeleton, mod loads, Aliens team, 2 items | ✅ built, awaiting in-game test |
-| M1 | Remaining 7 items + Volatiles, ores, drills, smelter and fabricator | |
+| M0 | Gradle skeleton, mod loads, Aliens team, 2 items | ✅ loads in game (build 160.7) |
+| M1 | Remaining 7 items + Volatiles, ores, drills, smelter and fabricator | 🟡 content + sprites in; tuning and in-game test pending |
 | M2 | Orbital Uplink and the mission system (multiplayer-safe) | |
 | M3 | Mining units T1–T3 | |
 | M4 | Planet Aphelion: generator, first 3 sectors, tech tree | |
