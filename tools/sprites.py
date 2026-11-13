@@ -826,11 +826,11 @@ def alien_blocks():
     d.ellipse([52, 52, 76, 76], fill=GLOW_DARK)
     d.ellipse([58, 58, 70, 70], fill=GLOW)
     d.point([(61, 60)], fill=(255, 255, 255, 255))
-    save(im, BLOCKS, "brood-core")
+    save(im, BLOCKS, "core-brood")
     im, d = new(128)
     for cx, cy in ((22, 22), (106, 22), (22, 106), (106, 106)):
         d.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=(255, 255, 255, 255))
-    save(im, BLOCKS, "brood-core-team")
+    save(im, BLOCKS, "core-brood-team")
 
 
 if __name__ == "__main__":

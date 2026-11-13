@@ -54,7 +54,7 @@ public final class AlienWaves {
         );
     }
 
-    /** The Hive: attack sector. Constant pressure while the player pushes into the Brood Cores. */
+    /** The Hive: attack sector. Constant pressure while the player pushes into the Core: Brood blocks. */
     public static Seq<SpawnGroup> theHive() {
         return Seq.with(
             group(hatchling, 0, 4, 1.5f, 24, 0, 8f),

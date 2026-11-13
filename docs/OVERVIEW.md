@@ -142,7 +142,7 @@ Editor-only: players can't build them, but you can place them in maps. Procedura
 | **Spore Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
 | **Acid Spire** | 2×2 turret | Range 125 (just inside the Bolter's 130); acid orbs burst into 6 smaller orbs. |
 | **Chitin Wall** / Large | 1×1 / 2×2 | 440 / 1,760 HP, armor 2, **regrows 1% HP per second**. |
-| **Brood Core** | 4×4 | The Alien core: 5,000 HP. Destroy them all to win attack sectors. |
+| **Core: Brood** | 4×4 | The Alien core: 5,000 HP. Destroy them all to win attack sectors. |
 
 ## 5c. Balance (tested in the simulator)
 
@@ -250,7 +250,7 @@ Each sector activates automatically once its map file is in `assets/maps/`. Unti
 | 2 | Frost Ridge | `frost-ridge.msav` | 170 | 20 waves | + Leachers from wave 6 |
 | 3 | Uplink Crater | `uplink-crater.msav` | 64 | 25 waves | + Malign from wave 8 |
 | 4 | Ice Shelf | `ice-shelf.msav` | 218 | 30 waves | + Rippers from wave 18 |
-| 5 | The Hive | `the-hive.msav` | 23 | **Destroy all Brood Cores** | All Aliens |
+| 5 | The Hive | `the-hive.msav` | 23 | **Destroy all Core: Brood blocks** | All Aliens |
 
 - Each sector unlocks after the previous one is captured, and appears in the tech tree.
 - **Waves:** if your map's waves use Alien units, I keep them. Otherwise the designed set above is used.

@@ -106,7 +106,7 @@ public final class SnAlienBlocks {
             armor = 2f;
         }};
 
-        broodCore = new CoreBlock("brood-core") {{
+        broodCore = new CoreBlock("core-brood") {{
             requirements(Category.effect, BuildVisibility.editorOnly, ItemStack.empty);
             size = 4;
             health = 5000;

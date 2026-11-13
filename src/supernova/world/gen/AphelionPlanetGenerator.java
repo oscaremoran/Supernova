@@ -153,7 +153,7 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
 
     /**
      * Enemy bases come from the vanilla base generator. Swap their buildings for Alien structures:
-     * cores become Brood Cores (each guarded by a Hive), turrets become Spore Pods or Acid Spires,
+     * cores become Core: Brood blocks (each guarded by a Hive), turrets become Spore Pods or Acid Spires,
      * walls become Chitin Walls, and everything else (conveyors, drills, factories) is removed.
      */
     private void convertEnemyBases() {
@@ -182,7 +182,7 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
                 center.setAir();
             }
         }
-        // One Hive near each Brood Core, wherever there's room.
+        // One Hive near each Core: Brood, wherever there's room.
         for (Tile core : cores) {
             for (int attempt = 0; attempt < 24; attempt++) {
                 float angle = attempt * 15f;
