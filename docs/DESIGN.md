@@ -109,4 +109,4 @@
 - The ferrite conveyor and bridge pieces keep the vanilla *layout* (required by the game's connection logic), repainted in Supernova colors by `tools/conveyor.py`.
 - Alien **enemy bases** still use vanilla buildings on the Aliens team.
 - Sectors are procedural, from a re-skinned Serpulo generator. Hand-made story sectors are TBD.
-- Tutorial: an 8-step objectives chain on the Landing Site (`AphelionTutorial`).
+- Tutorial: Ground Zero-style, 11 steps on the Landing Site with on-map markers (ore, core, Alien spawn) and a lean start (80 ferrite). `AphelionTutorial`, versioned via a rules tag.

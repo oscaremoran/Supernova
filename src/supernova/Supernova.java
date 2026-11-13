@@ -23,10 +23,10 @@ public class Supernova extends Mod {
                 && SnAliens.hasVanillaUnits(Vars.state.rules.spawns)) {
                 SnAliens.convertWaves(Vars.state.rules.spawns);
             }
-            // Saves of the start sector made before the tutorial existed get it added (host/singleplayer only).
+            // Landing Site tutorial: added on first load, and replaced in saves with an older version (host/singleplayer only).
             if (!Vars.net.client() && Vars.state.isCampaign() && Vars.state.rules.sector != null
                 && Vars.state.rules.sector == SnPlanets.aphelion.getStartSector()
-                && Vars.state.rules.objectives.all.isEmpty()) {
+                && AphelionTutorial.outdated(Vars.state.rules)) {
                 AphelionTutorial.apply(Vars.state.rules);
             }
         });

@@ -99,9 +99,6 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
         SnAliens.convertWaves(Vars.state.rules.spawns);
         convertTerrain();
         replaceStartingCore();
-        if (sector != null && sector == sector.planet.getStartSector()) {
-            AphelionTutorial.apply(Vars.state.rules);
-        }
     }
 
     private void convertTerrain() {
@@ -142,9 +139,14 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
                 center.setBlock(SnBlocks.coreOutpost, team);
                 if (center.build != null) {
                     center.build.items.clear();
-                    center.build.items.add(SnItems.ferrite, 300);
-                    center.build.items.add(SnItems.cobaltine, 150);
-                    center.build.items.add(SnItems.quartzite, 100);
+                    if (sector != null && sector == sector.planet.getStartSector()) {
+                        // Landing Site: a lean start, like Ground Zero. The tutorial begins with mining by hand.
+                        center.build.items.add(SnItems.ferrite, 80);
+                    } else {
+                        center.build.items.add(SnItems.ferrite, 300);
+                        center.build.items.add(SnItems.cobaltine, 150);
+                        center.build.items.add(SnItems.quartzite, 100);
+                    }
                 }
                 return;
             }
