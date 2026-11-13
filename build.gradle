@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+version = '0.1.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+// We compile against the game's own desktop.jar so the mod always matches the
+// installed build exactly (currently V8 build 160.7). Override the path in
+// local.properties with: mindustryJar=/path/to/desktop.jar
+def props = new Properties()
+def localProps = file('local.properties')
+if (localProps.exists()) localProps.withInputStream { props.load(it) }
+def mindustryJar = props.getProperty('mindustryJar',
+    "${System.getProperty('user.home')}/Library/Application Support/Steam/steamapps/common/Mindustry/Mindustry.app/Contents/Resources/desktop.jar")
+
+sourceSets.main.java.srcDirs = ['src']
+
+dependencies {
+    compileOnly files(mindustryJar)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
+// Desktop mod jar: compiled classes + mod.hjson + assets at the jar root.
+tasks.register('modJar', Jar) {
+    group = 'build'
+    archiveFileName = 'Supernova.jar'
+    from sourceSets.main.output
+    from(projectDir) { include 'mod.hjson' }
+    from('assets')
+}
+
+// Copies the built jar into the game's mods folder for quick testing.
+tasks.register('deploy', Copy) {
+    group = 'build'
+    dependsOn 'modJar'
+    from tasks.named('modJar')
+    into "${System.getProperty('user.home')}/Library/Application Support/Mindustry/mods"
+}

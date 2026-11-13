@@ -1,0 +1,8 @@
+name: "supernova"
+displayName: "Supernova"
+author: "oscaremoran"
+description: "Mine the asteroid belts of Aphelion, build a deep resource economy, and hold back the Aliens."
+version: "0.1.0"
+main: "supernova.Supernova"
+minGameVersion: "160"
+java: true
