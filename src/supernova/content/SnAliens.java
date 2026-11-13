@@ -43,17 +43,17 @@ public final class SnAliens {
         // ================= Bugs =================
 
         // T1: weak, fast and annoying. Rapid little acid spits.
-        hatchling = walker("hatchling", 4, 130f, 0.95f, 8f, 0f);
+        hatchling = walker("hatchling", 4, 130f, 0.8f, 8f, 0f);
         hatchling.weapons.add(new Weapon() {{
-            reload = 13f;
+            reload = 16f;
             x = 2.5f;
             y = 2f;
             alternate = true;
             shootSound = Sounds.shootLancer;
-            bullet = new BasicBulletType(3.2f, 6f) {{
+            bullet = new BasicBulletType(3.2f, 4f) {{
                 width = 6f;
                 height = 8f;
-                lifetime = 42f;
+                lifetime = 30f; // range 96: Bolters (130) out-range Hatchlings
                 backColor = BUG_GLOW_DARK;
                 frontColor = BUG_GLOW;
                 hitColor = BUG_GLOW;
@@ -62,18 +62,18 @@ public final class SnAliens {
         }});
 
         // T2: tougher. Lobs purple orbs that burst into a ring of smaller orbs.
-        malign = walker("malign", 4, 560f, 0.55f, 14f, 3f);
+        malign = walker("malign", 4, 480f, 0.55f, 14f, 3f);
         malign.weapons.add(new Weapon() {{
             reload = 48f;
             x = 0f;
             y = 4f;
             mirror = false;
             shootSound = Sounds.shootLancer;
-            bullet = new BasicBulletType(2.4f, 16f) {{
+            bullet = new BasicBulletType(2.4f, 14f) {{
                 sprite = "circle-bullet";
                 width = height = 12f;
                 shrinkY = 0f;
-                lifetime = 62f;
+                lifetime = 52f; // range ~125, just inside Bolter range
                 backColor = BUG_GLOW_DARK;
                 frontColor = BUG_GLOW;
                 hitColor = BUG_GLOW;
@@ -85,7 +85,7 @@ public final class SnAliens {
                 fragRandomSpread = 0f;
                 fragSpread = 72f;
                 fragVelocityMin = 0.9f;
-                fragBullet = new BasicBulletType(2.6f, 8f) {{
+                fragBullet = new BasicBulletType(2.6f, 6f) {{
                     sprite = "circle-bullet";
                     width = height = 7f;
                     shrinkY = 0f;
@@ -101,7 +101,8 @@ public final class SnAliens {
         // ================= Predators =================
 
         // T1: tough brawler. Short-range bites heal it for 60% of the damage dealt.
-        leacher = walker("leacher", 6, 900f, 0.5f, 16f, 6f);
+        // Armor 3 so ferrite Bolter ammo (14) still does 11 per hit.
+        leacher = walker("leacher", 6, 600f, 0.5f, 16f, 3f);
         leacher.weapons.add(new Weapon() {{
             reload = 24f;
             x = 4f;
@@ -121,7 +122,7 @@ public final class SnAliens {
         }});
 
         // T2: heavy hitter with a sustained Vela-style beam. Slows itself while firing.
-        ripper = walker("ripper", 6, 1700f, 0.4f, 22f, 8f);
+        ripper = walker("ripper", 6, 1100f, 0.4f, 22f, 7f);
         ripper.weapons.add(new Weapon() {{
             reload = 170f;
             x = 0f;
@@ -133,8 +134,8 @@ public final class SnAliens {
             shootSound = Sounds.beamLustre;
             shootStatus = StatusEffects.slow;
             shootStatusDuration = 110f;
-            bullet = new ContinuousLaserBulletType(13f) {{
-                length = 130f;
+            bullet = new ContinuousLaserBulletType(9f) {{ // ~108 DPS while firing, ~64 average
+                length = 120f;
                 lifetime = 100f;
                 width = 6f;
                 shake = 1f;

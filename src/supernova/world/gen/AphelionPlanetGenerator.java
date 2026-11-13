@@ -13,6 +13,7 @@ import mindustry.world.Tile;
 import mindustry.world.blocks.environment.Floor;
 import mindustry.world.blocks.environment.StaticWall;
 import mindustry.world.blocks.storage.CoreBlock;
+import supernova.content.SnAlienBlocks;
 import supernova.content.SnAliens;
 import supernova.content.SnBlocks;
 import supernova.content.SnItems;
@@ -106,6 +107,7 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
         SnAliens.convertWaves(Vars.state.rules.spawns);
         convertTerrain();
         replaceStartingCore();
+        convertEnemyBases();
     }
 
     private void convertTerrain() {
@@ -147,5 +149,61 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
                 return;
             }
         }
+    }
+
+    /**
+     * Enemy bases come from the vanilla base generator. Swap their buildings for Alien structures:
+     * cores become Brood Cores (each guarded by a Hive), turrets become Spore Pods or Acid Spires,
+     * walls become Chitin Walls, and everything else (conveyors, drills, factories) is removed.
+     */
+    private void convertEnemyBases() {
+        Team aliens = SnTeams.aliens;
+        arc.struct.Seq<mindustry.gen.Building> builds = new arc.struct.Seq<>();
+        arc.struct.ObjectSet<mindustry.gen.Building> seen = new arc.struct.ObjectSet<>();
+        for (Tile tile : tiles) {
+            if (tile.build != null && tile.build.team == aliens && seen.add(tile.build)) builds.add(tile.build);
+        }
+        arc.struct.Seq<Tile> cores = new arc.struct.Seq<>();
+        for (mindustry.gen.Building b : builds) {
+            Block block = b.block;
+            if (block.name.startsWith("supernova-")) continue;
+            Tile center = b.tile;
+            if (block instanceof CoreBlock) {
+                center.setBlock(SnAlienBlocks.broodCore, aliens);
+                cores.add(center);
+            } else if (block instanceof mindustry.world.blocks.defense.turrets.Turret) {
+                center.setAir();
+                center.setBlock(block.size <= 1 ? SnAlienBlocks.sporePod : SnAlienBlocks.acidSpire, aliens);
+            } else if (block instanceof mindustry.world.blocks.defense.Wall) {
+                center.setAir();
+                if (block.size == 1) center.setBlock(SnAlienBlocks.chitinWall, aliens);
+                else if (block.size == 2) center.setBlock(SnAlienBlocks.chitinWallLarge, aliens);
+            } else {
+                center.setAir();
+            }
+        }
+        // One Hive near each Brood Core, wherever there's room.
+        for (Tile core : cores) {
+            for (int attempt = 0; attempt < 24; attempt++) {
+                float angle = attempt * 15f;
+                int hx = core.x + Math.round(arc.math.Mathf.cosDeg(angle) * 7f);
+                int hy = core.y + Math.round(arc.math.Mathf.sinDeg(angle) * 7f);
+                if (fits(SnAlienBlocks.hive, hx, hy)) {
+                    tiles.getn(hx, hy).setBlock(SnAlienBlocks.hive, aliens);
+                    break;
+                }
+            }
+        }
+    }
+
+    private boolean fits(Block block, int cx, int cy) {
+        int offset = (block.size - 1) / 2;
+        for (int dx = 0; dx < block.size; dx++) {
+            for (int dy = 0; dy < block.size; dy++) {
+                Tile t = tiles.get(cx - offset + dx, cy - offset + dy);
+                if (t == null || t.block() != Blocks.air || t.floor().isDeep() || t.floor().solid) return false;
+            }
+        }
+        return true;
     }
 }

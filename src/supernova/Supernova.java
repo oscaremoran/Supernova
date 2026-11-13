@@ -55,7 +55,9 @@ public class Supernova extends Mod {
         SnUnits.load();
         SnAliens.load();
         SnBlocks.load();
+        SnAlienBlocks.load();
         SnPlanets.load();
+        SnSectors.load();
         SnTechTree.load();
         Log.info("[Supernova] Content loaded.");
     }

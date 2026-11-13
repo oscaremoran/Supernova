@@ -761,10 +761,83 @@ def aliens():
     walker_sprites("ripper", 60, [(-18, 11, 8), (-5, 17, 10), (13, 19, 13)], 4, spikes=3,
                    glow=PRED_GLOW, glow_dark=PRED_GLOW_DARK, jaws=1.4)
 
+
+def chitin_blob(d, cx, cy, r, glow_spots=0, seed=0):
+    """Organic chitin mound: layered ellipses with a lit rim and glowing pores."""
+    rng = random.Random(seed)
+    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=SHELL)
+    d.ellipse([cx - r + 2, cy - r + 2, cx + r - 2, cy + r - 2], fill=SHELL_MID)
+    d.arc([cx - r + 2, cy - r + 2, cx + r - 2, cy + r - 2], 160, 280, fill=SHELL_LIGHT, width=max(1, r // 8))
+    for _ in range(glow_spots):
+        a = rng.uniform(0, math.tau)
+        dist = rng.uniform(0.3, 0.7) * r
+        pr = max(1, int(r / 9))
+        x, y = cx + math.cos(a) * dist, cy + math.sin(a) * dist
+        d.ellipse([x - pr - 1, y - pr - 1, x + pr + 1, y + pr + 1], fill=GLOW_DARK)
+        d.ellipse([x - pr, y - pr, x + pr, y + pr], fill=GLOW)
+
+
+def alien_blocks():
+    # Hive (3x3): a mound with a glowing central maw
+    im, d = new(96)
+    chitin_blob(d, 48, 48, 44, glow_spots=7, seed=4)
+    chitin_blob(d, 48, 48, 26, glow_spots=0)
+    d.ellipse([36, 36, 60, 60], fill=hexc("120e18"))
+    d.ellipse([41, 41, 55, 55], fill=GLOW_DARK)
+    d.ellipse([45, 45, 51, 51], fill=GLOW)
+    save(im, BLOCKS, "hive")
+
+    # Spore Pod (1x1 turret head, facing up)
+    im, d = new(32)
+    d.polygon([(14, 3), (18, 3), (18, 14), (14, 14)], fill=SHELL_LIGHT)
+    chitin_blob(d, 16, 19, 9, glow_spots=0)
+    glow_eye(d, 16, 19, 3)
+    save(im, BLOCKS, "spore-pod")
+
+    # Acid Spire (2x2 turret head)
+    im, d = new(64)
+    d.polygon([(28, 2), (36, 2), (35, 28), (29, 28)], fill=SHELL_LIGHT)
+    d.line([(32, 4), (32, 26)], fill=GLOW_DARK, width=2)
+    chitin_blob(d, 32, 38, 18, glow_spots=4, seed=9)
+    glow_eye(d, 32, 38, 6)
+    save(im, BLOCKS, "acid-spire")
+
+    # Chitin walls: overlapping plates
+    for name, n in (("chitin-wall", 1), ("chitin-wall-large", 2)):
+        sz = 32 * n
+        im, d = new(sz)
+        d.rectangle([0, 0, sz - 1, sz - 1], fill=SHELL)
+        rng = random.Random(n * 7)
+        for _ in range(4 * n * n):
+            x, y = rng.randint(4, sz - 5), rng.randint(4, sz - 5)
+            r = rng.randint(5, 8)
+            d.ellipse([x - r, y - r, x + r, y + r], fill=SHELL_MID, outline=SHELL)
+            d.arc([x - r + 1, y - r + 1, x + r - 1, y + r - 1], 180, 270, fill=SHELL_LIGHT)
+        d.line([(sz * 0.25, sz * 0.5), (sz * 0.75, sz * 0.5)], fill=GLOW_DARK)
+        save(im, BLOCKS, name)
+
+    # Brood Core (4x4)
+    im, d = new(128)
+    d.rectangle([0, 0, 127, 127], fill=SHELL)
+    for cx, cy in ((22, 22), (106, 22), (22, 106), (106, 106)):
+        chitin_blob(d, cx, cy, 18, glow_spots=2, seed=cx + cy)
+    chitin_blob(d, 64, 64, 50, glow_spots=8, seed=2)
+    d.ellipse([46, 46, 82, 82], fill=hexc("120e18"))
+    d.ellipse([52, 52, 76, 76], fill=GLOW_DARK)
+    d.ellipse([58, 58, 70, 70], fill=GLOW)
+    d.point([(61, 60)], fill=(255, 255, 255, 255))
+    save(im, BLOCKS, "brood-core")
+    im, d = new(128)
+    for cx, cy in ((22, 22), (106, 22), (22, 106), (106, 106)):
+        d.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=(255, 255, 255, 255))
+    save(im, BLOCKS, "brood-core-team")
+
+
 if __name__ == "__main__":
     items()
     ores()
     blocks()
     units()
     aliens()
+    alien_blocks()
     print("sprites generated")

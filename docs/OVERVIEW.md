@@ -112,10 +112,10 @@ Black chitin, all legged walkers, in two unit trees. **Bugs** glow violet; **Pre
 
 | Tree | Unit | Tier | HP / Armor | Attack |
 |---|---|---|---|---|
-| Bugs (light) | **Hatchling** | T1 | 130 / 0 | Fast, rapid little acid spits. Weak but annoying. |
-| Bugs (light) | **Malign** | T2 | 560 / 3 | Lobs purple orbs that **split into a ring of 5 smaller orbs**. |
-| Predators (beatdown) | **Leacher** | T1 | 900 / 6 | Short-range bites with **lifesteal** (heals 60% of damage dealt). |
-| Predators (beatdown) | **Ripper** | T2 | 1,700 / 8 | **Vela-style sustained crimson beam**. Slows itself while firing. |
+| Bugs (light) | **Hatchling** | T1 | 130 / 0 | Fast, rapid little acid spits (range 96). Weak but annoying. |
+| Bugs (light) | **Malign** | T2 | 480 / 3 | Lobs purple orbs (range ~125) that **split into a ring of 5 smaller orbs**. |
+| Predators (beatdown) | **Leacher** | T1 | 600 / 3 | Short-range bites with **lifesteal** (heals 60% of damage dealt). |
+| Predators (beatdown) | **Ripper** | T2 | 1,100 / 7 | **Vela-style sustained crimson beam** (range 120). Slows itself while firing. |
 
 Waves are generated from vanilla wave patterns, then converted: light, fast and air units become Bugs; heavy units become Predators.
 
@@ -132,7 +132,32 @@ Waves are generated from vanilla wave patterns, then converted to Aliens by tier
 
 ---
 
-## 6. Tutorial (Landing Site)
+## 5b. Alien structures
+
+Editor-only: players can't build them, but you can place them in maps. Procedural enemy bases on Aphelion are converted to use them automatically. They need no ammo or power.
+
+| Structure | Size | What it does |
+|---|---|---|
+| **Hive** | 3×3 | Hatches a Hatchling every 40 s, up to 3 alive nearby. |
+| **Spore Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
+| **Acid Spire** | 2×2 turret | Range 165; acid orbs burst into 6 smaller orbs. |
+| **Chitin Wall** / Large | 1×1 / 2×2 | 440 / 1,760 HP, armor 2, **regrows 1% HP per second**. |
+| **Brood Core** | 4×4 | The Alien core: 5,000 HP. Destroy them all to win attack sectors. |
+
+## 5c. Balance notes (the Bolter benchmark)
+
+The Bolter is the only early turret, so everything is tuned against it: 38 DPS with ferrite ammo (14 damage), 64 DPS with ferrosteel ammo (26 damage, pierces), range 130.
+
+| Matchup | Result |
+|---|---|
+| Bolter vs Hatchling | ~3.4 s per kill. Bolters out-range Hatchlings (130 vs 96), so they get free shots. |
+| Bolter vs Malign | Ferrite: ~16 s per kill (armor 3). **Ferrosteel ammo recommended.** |
+| Bolter vs Leacher | Ferrite: ~20 s per kill; ferrosteel ~10 s. Walls in front matter (its range is ~50). |
+| Bolter vs Ripper | Ferrite barely scratches it (armor 7). **Ferrosteel needed**: ~24 s per Bolter. |
+| Spore Pod vs Bolter | The Bolter wins on range (130 vs 110). |
+| Acid Spire vs Bolter | The Spire out-ranges it (165). Push it with units or your Pioneer. |
+
+## 6. Tutorial## 6. Tutorial (Landing Site)
 
 Ground Zero style. Steps unlock one at a time, and labels appear on the map while their step is active.
 
@@ -167,10 +192,25 @@ Core: Outpost
 
 ---
 
+## 7b. Story sectors (hand-made maps)
+
+Each sector activates automatically once its map file is in `assets/maps/`. Until then, that spot on the globe stays procedural.
+
+| # | Sector | Map file | Globe sector | Win | Waves |
+|---|---|---|---|---|---|
+| 1 | Landing Site | `landing-site.msav` | 15 (start) | Survive 15 waves | Hatchlings only; first wave 3× later than normal |
+| 2 | Frost Ridge | `frost-ridge.msav` | 170 | 20 waves | + Leachers from wave 6 |
+| 3 | Uplink Crater | `uplink-crater.msav` | 64 | 25 waves | + Malign from wave 8 |
+| 4 | Ice Shelf | `ice-shelf.msav` | 218 | 30 waves | + Rippers from wave 18 |
+| 5 | The Hive | `the-hive.msav` | 23 | **Destroy all Brood Cores** | All Aliens |
+
+- Each sector unlocks after the previous one is captured, and appears in the tech tree.
+- **Waves:** if your map's waves use Alien units, I keep them. Otherwise the designed set above is used.
+- **Starting items** grow with each sector.
+
 ## 8. Known gaps
 
 - **Not yet tested in-game:** the latest batch (new sprites, laser Pioneer, GZ tutorial, Aliens, copper fix, research costs).
-- Alien **enemy bases** use vanilla buildings.
 - No **hand-made story sectors**; every sector is procedural.
 - The Uplink's "needs propellant" zone feature is built in, but no zone uses it now that the Deep Belt is cut.
 - **Desktop only**: no Android build.
@@ -182,7 +222,7 @@ Core: Outpost
 | Path | What |
 |---|---|
 | `src/supernova/content/` | All content: items, liquids, blocks, units, Aliens, planets, tech tree, teams |
-| `src/supernova/world/` | Orbital Uplink, sector names, planet generator, tutorial |
+| `src/supernova/world/` | Orbital Uplink, Hive, Chitin Wall, editor tweaks, sector names, planet generator, tutorial, Alien wave designs |
 | `src/supernova/ai/HaulerAI.java` | Hauler behavior |
 | `assets/bundles/bundle.properties` | All in-game text |
 | `tools/sprites.py` | Generates every sprite |

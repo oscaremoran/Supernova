@@ -1,6 +1,9 @@
 package supernova.content;
 
+import arc.struct.Seq;
+import mindustry.game.Objectives.SectorComplete;
 import mindustry.type.ItemStack;
+import mindustry.type.SectorPreset;
 
 import static mindustry.content.TechTree.*;
 import static supernova.content.SnBlocks.*;
@@ -54,6 +57,9 @@ public final class SnTechTree {
                 });
             });
 
+            // Story sectors (only those whose maps exist).
+            sectorChain(SnSectors.available(), 0);
+
             nodeProduce(ferrite, () -> {
                 nodeProduce(cobaltine, () -> {
                     nodeProduce(iridium, () -> {
@@ -79,5 +85,16 @@ public final class SnTechTree {
             }
             node.requirements = scaled;
         });
+    }
+
+    /** Each story sector unlocks after completing the previous one. */
+    private static void sectorChain(Seq<SectorPreset> sectors, int i) {
+        if (i >= sectors.size) return;
+        SectorPreset s = sectors.get(i);
+        if (i == 0) {
+            node(s, () -> sectorChain(sectors, i + 1));
+        } else {
+            node(s, Seq.with(new SectorComplete(sectors.get(i - 1))), () -> sectorChain(sectors, i + 1));
+        }
     }
 }
