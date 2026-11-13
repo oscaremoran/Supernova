@@ -334,6 +334,167 @@ def uplink():
     save(im, BLOCKS, "orbital-uplink-pod")
 
 
+UNITS = os.path.join(ROOT, "units")
+HULL = hexc("8a8f9c")
+HULL_LIGHT = hexc("b5bac6")
+HULL_DARK = hexc("5a5f6c")
+
+
+def poly_shaded(d, pts, base):
+    """Fill with an outline and a lighter left half for a simple light-from-left look."""
+    d.polygon(pts, fill=OUTLINE)
+    cx = sum(p[0] for p in pts) / len(pts)
+    inner = [(x + (1 if x < cx else -1), y) for x, y in pts]
+    ys = [p[1] for p in pts]
+    inner = [(x, y + (1 if y < (min(ys) + max(ys)) / 2 else -1)) for x, y in inner]
+    d.polygon(inner, fill=base)
+    left = [(x, y) if x <= cx else (cx, y) for x, y in inner]
+    d.polygon(left, fill=shade(base, 1.18))
+
+
+def unit_sprite(name, size, body, cell, details=None):
+    im, d = new(size)
+    for pts in body:
+        poly_shaded(d, pts, HULL)
+    if details:
+        details(d)
+    save(im, UNITS, name)
+    cim, cd = new(size)
+    for pts in cell:
+        cd.polygon(pts, fill=(255, 255, 255, 255))
+    save(cim, UNITS, name + "-cell")
+
+
+def units():
+    # Pioneer: compact delta-wing builder, 40px
+    unit_sprite("pioneer", 40,
+        [[(20, 3), (27, 16), (35, 30), (27, 33), (20, 28), (13, 33), (5, 30), (13, 16)]],
+        [[(20, 12), (23, 20), (20, 24), (17, 20)]],
+        lambda d: (d.rectangle([18, 28, 22, 33], fill=HULL_DARK), d.point([(20, 8)], fill=hexc("b8f0ff"))))
+    # Prospector: small round drone with a drill claw, 32px
+    def prospector_details(d):
+        d.polygon([(14, 2), (18, 2), (17, 7), (15, 7)], fill=hexc("e0b04a"), outline=OUTLINE)
+    unit_sprite("prospector", 32,
+        [[(16, 6), (24, 10), (26, 18), (22, 26), (16, 28), (10, 26), (6, 18), (8, 10)],
+         [(3, 14), (7, 12), (7, 22), (3, 20)], [(29, 14), (25, 12), (25, 22), (29, 20)]],
+        [[(16, 13), (19, 16), (16, 21), (13, 16)]],
+        prospector_details)
+    # Surveyor: bigger mining drone with twin drill arms, 44px
+    def surveyor_details(d):
+        for x in (12, 28):
+            d.polygon([(x, 2), (x + 4, 2), (x + 3, 9), (x + 1, 9)], fill=hexc("e0b04a"), outline=OUTLINE)
+        d.ellipse([19, 17, 25, 23], fill=hexc("6cc9e0"), outline=OUTLINE)
+    unit_sprite("surveyor", 44,
+        [[(22, 6), (32, 10), (38, 22), (32, 36), (22, 40), (12, 36), (6, 22), (12, 10)],
+         [(10, 8), (16, 8), (16, 14), (10, 14)], [(28, 8), (34, 8), (34, 14), (28, 14)]],
+        [[(22, 26), (28, 30), (22, 35), (16, 30)]],
+        surveyor_details)
+    # Hauler: long cargo hauler with a container bay, 52px
+    def hauler_details(d):
+        d.rectangle([18, 18, 33, 36], fill=hexc("6f7682"), outline=OUTLINE)
+        for y in (22, 27, 32):
+            d.line([(19, y), (32, y)], fill=hexc("4a4f5c"))
+        d.point([(25, 9)], fill=hexc("b8f0ff"))
+    unit_sprite("hauler", 52,
+        [[(26, 3), (34, 12), (36, 40), (44, 46), (34, 49), (26, 45), (18, 49), (8, 46), (16, 40), (18, 12)]],
+        [[(22, 12), (30, 12), (31, 16), (21, 16)]],
+        hauler_details)
+
+
+def wall(name, tiles, base, light, dark):
+    im, d = new(32 * tiles)
+    s = 32 * tiles
+    d.rectangle([0, 0, s - 1, s - 1], fill=OUTLINE)
+    d.rectangle([1, 1, s - 2, s - 2], fill=hexc(base))
+    d.line([(1, 1), (s - 2, 1)], fill=hexc(light), width=2)
+    d.line([(1, 1), (1, s - 2)], fill=hexc(light), width=2)
+    d.line([(2, s - 2), (s - 2, s - 2)], fill=hexc(dark), width=2)
+    d.line([(s - 2, 2), (s - 2, s - 2)], fill=hexc(dark), width=2)
+    # riveted panel seams
+    step = 16
+    for x in range(step, s, step):
+        d.line([(x, 3), (x, s - 4)], fill=hexc(dark))
+    for y in range(step, s, step):
+        d.line([(3, y), (s - 4, y)], fill=hexc(dark))
+    for x in range(6, s, step):
+        for y in range(6, s, step):
+            d.point([(x, y)], fill=hexc(light))
+    save(im, BLOCKS, name)
+
+
+def bolter():
+    im, d = new(64)
+    # turret head facing up: body + twin barrels
+    d.rectangle([26, 4, 30, 30], fill=OUTLINE)
+    d.rectangle([34, 4, 38, 30], fill=OUTLINE)
+    d.rectangle([27, 5, 29, 29], fill=hexc("6f7682"))
+    d.rectangle([35, 5, 37, 29], fill=hexc("6f7682"))
+    poly_shaded(d, [(32, 18), (44, 24), (48, 40), (42, 52), (22, 52), (16, 40), (20, 24)], hexc("8a7f78"))
+    d.rectangle([28, 34, 36, 44], fill=hexc("4f74c9"), outline=OUTLINE)
+    save(im, BLOCKS, "bolter")
+
+
+def solar_array():
+    im, d, s = plate(2)
+    for gx in range(2):
+        for gy in range(2):
+            x0, y0 = 6 + gx * 27, 6 + gy * 27
+            d.rectangle([x0, y0, x0 + 24, y0 + 24], fill=OUTLINE)
+            d.rectangle([x0 + 1, y0 + 1, x0 + 23, y0 + 23], fill=hexc("2b3d6b"))
+            for k in range(1, 3):
+                d.line([(x0 + 1, y0 + k * 8), (x0 + 23, y0 + k * 8)], fill=hexc("4f74c9"))
+                d.line([(x0 + k * 8, y0 + 1), (x0 + k * 8, y0 + 23)], fill=hexc("4f74c9"))
+            d.line([(x0 + 2, y0 + 2), (x0 + 8, y0 + 2)], fill=hexc("b8d0ff"))
+    save(im, BLOCKS, "solar-array")
+
+
+def burner():
+    im, d, s = plate(2)
+    d.ellipse([12, 12, 51, 51], fill=FRAME_DARK)
+    d.ellipse([15, 15, 48, 48], fill=hexc("1d3a44"))
+    d.ellipse([21, 21, 42, 42], fill=hexc("6cc9e0"))
+    d.ellipse([26, 26, 37, 37], fill=hexc("e6fbff"))
+    for x, y in ((8, 30), (52, 30), (30, 8), (30, 52)):
+        d.rectangle([x - 3, y - 3, x + 3, y + 3], fill=hexc("e0b04a"), outline=OUTLINE)
+    save(im, BLOCKS, "volatile-burner")
+
+
+def drone_bay():
+    im, d, s = plate(3)
+    d.rectangle([12, 12, s - 13, s - 13], fill=FRAME_DARK)
+    d.rectangle([14, 14, s - 15, s - 15], fill=hexc("2a272e"))
+    for k in range(4):  # hazard stripes on the pad rim
+        x = 18 + k * 16
+        d.polygon([(x, 14), (x + 8, 14), (x + 4, 19), (x - 4, 19)], fill=hexc("e0b04a"))
+        d.polygon([(x, s - 15), (x + 8, s - 15), (x + 4, s - 20), (x - 4, s - 20)], fill=hexc("e0b04a"))
+    save(im, BLOCKS, "drone-bay")
+    # output arrow (rotated by the game toward the output side)
+    im, d = new(s)
+    d.polygon([(s - 10, s // 2), (s - 20, s // 2 - 8), (s - 20, s // 2 + 8)], fill=hexc("e0b04a"), outline=OUTLINE)
+    save(im, BLOCKS, "drone-bay-out")
+    # top: corner clamps drawn over the unit being built
+    im, d = new(s)
+    for cx, cy in ((14, 14), (s - 15, 14), (14, s - 15), (s - 15, s - 15)):
+        d.rectangle([cx - 5, cy - 5, cx + 5, cy + 5], fill=OUTLINE)
+        d.rectangle([cx - 4, cy - 4, cx + 4, cy + 4], fill=FRAME_LIGHT)
+    save(im, BLOCKS, "drone-bay-top")
+
+
+def core_outpost():
+    im, d, s = plate(3)
+    c = s // 2
+    d.rectangle([14, 14, s - 15, s - 15], fill=FRAME_DARK)
+    d.polygon([(c, 18), (s - 18, c), (c, s - 18), (18, c)], fill=hexc("6f7682"), outline=OUTLINE)
+    d.polygon([(c, 26), (s - 26, c), (c, s - 26), (26, c)], fill=hexc("4f74c9"))
+    d.ellipse([c - 7, c - 7, c + 7, c + 7], fill=hexc("b8f0ff"), outline=OUTLINE)
+    save(im, BLOCKS, "core-outpost")
+    # team-colored trim (tinted by the game)
+    im, d = new(s)
+    for cx, cy in ((8, 8), (s - 9, 8), (8, s - 9), (s - 9, s - 9)):
+        d.rectangle([cx - 3, cy - 3, cx + 3, cy + 3], fill=(255, 255, 255, 255))
+    save(im, BLOCKS, "core-outpost-team")
+
+
 def blocks():
     drill()
     smelter()
@@ -341,10 +502,20 @@ def blocks():
     fabricator()
     forge()
     uplink()
+    wall("ferrite-wall", 1, "8a7f78", "b0a69e", "5e5550")
+    wall("ferrite-wall-large", 2, "8a7f78", "b0a69e", "5e5550")
+    wall("ferrosteel-wall", 1, "6f7682", "9aa2b0", "474c56")
+    wall("ferrosteel-wall-large", 2, "6f7682", "9aa2b0", "474c56")
+    bolter()
+    solar_array()
+    burner()
+    drone_bay()
+    core_outpost()
 
 
 if __name__ == "__main__":
     items()
     ores()
     blocks()
+    units()
     print("sprites generated")

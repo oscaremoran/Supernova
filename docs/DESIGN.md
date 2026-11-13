@@ -20,7 +20,7 @@
 | | |
 |---|---|
 | Planet | **Aphelion**: a cold, rocky world. Mostly ferrite plains, cobaltine ridges and ice fields. |
-| Star | (TBD) an unstable, dying star. Its eventual supernova gives the mod its name and works as a late-campaign story beat. |
+| Star | **Ves**: an unstable, dying star. Its eventual supernova gives the mod its name and works as a late-campaign story beat. |
 | Belt | The Aphelion Belt: zones of asteroids (metallic, icy, rare) reached by orbital missions. |
 | Enemy | **The Aliens**: team slot `77`, black palette (`#141414`, rim `#3a3344`). |
 
@@ -98,7 +98,13 @@
 | M0 | Gradle skeleton, mod loads, Aliens team, 2 items | ✅ loads in game (build 160.7) |
 | M1 | Remaining 7 items + Volatiles, ores, drills, smelter and fabricator | 🟡 content + sprites in; tuning and in-game test pending |
 | M2 | Orbital Uplink and the mission system (multiplayer-safe) | 🟡 Orbital Uplink in (3 zones); in-game test pending |
-| M3 | Mining units T1–T3 | |
-| M4 | Planet Aphelion: generator, first 3 sectors, tech tree | |
+| M3 | Mining units T1–T3 | 🟡 Pioneer, Prospector, Surveyor, Hauler + Drone Bay; in-game test pending |
+| M4 | Planet Aphelion: generator, first 3 sectors, tech tree | 🟡 planet + star Ves, procedural sectors, tech tree, survival kit; hand-made sectors TBD |
 | M5 | Aliens unit tree and wave AI | |
 | M6 | Mining units T4–T5, deep belt, endgame tier | |
+
+## 10. Known placeholders
+
+- Conveyor, junction, router, bridge and power node use **vanilla art** (`VanillaSkins`) until custom sprites are drawn.
+- Alien waves and enemy bases use **vanilla units and buildings** on the Aliens team until M5.
+- Sectors are procedural, from a re-skinned Serpulo generator. Hand-made story sectors are TBD.
