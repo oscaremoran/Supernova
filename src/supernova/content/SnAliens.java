@@ -2,35 +2,37 @@ package supernova.content;
 
 import arc.graphics.Color;
 import arc.struct.ObjectMap;
-import mindustry.Vars;
+import arc.struct.Seq;
 import mindustry.content.Fx;
-import mindustry.entities.bullet.ArtilleryBulletType;
+import mindustry.content.StatusEffects;
 import mindustry.entities.bullet.BasicBulletType;
-import mindustry.entities.bullet.BulletType;
-import mindustry.entities.bullet.LaserBulletType;
+import mindustry.entities.bullet.ContinuousLaserBulletType;
 import mindustry.game.SpawnGroup;
 import mindustry.gen.LegsUnit;
 import mindustry.gen.Sounds;
-import mindustry.gen.UnitEntity;
+import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
 
-import arc.struct.Seq;
-
 /**
- * The Aliens: Aphelion's hostile faction.
- * Ground: chitinous walkers (Skitter, Stalker, Brute) plus the Spawnling swarm.
- * Air: Wisp, Shrike, Harrower.
- * Higher vanilla tiers in generated waves map onto Brute and Harrower.
- * Black shells with violet bioluminescence.
+ * The Aliens: Aphelion's hostile faction. Two unit trees, all legged walkers with black shells.
+ *
+ * <ul>
+ *   <li><b>Bugs</b> (violet glow), the light units: Hatchling (T1), Malign (T2)</li>
+ *   <li><b>Predators</b> (crimson glow), the beatdown units: Leacher (T1), Ripper (T2)</li>
+ * </ul>
  */
 public final class SnAliens {
-    public static final Color GLOW = Color.valueOf("b98cff");
-    public static final Color GLOW_DARK = Color.valueOf("6a3fd1");
+    public static final Color BUG_GLOW = Color.valueOf("b98cff");
+    public static final Color BUG_GLOW_DARK = Color.valueOf("6a3fd1");
+    public static final Color PRED_GLOW = Color.valueOf("ff4d6a");
+    public static final Color PRED_GLOW_DARK = Color.valueOf("a3203a");
     public static final Color OUTLINE = Color.valueOf("3a3148");
 
-    public static UnitType spawnling, skitter, stalker, brute;
-    public static UnitType wisp, shrike, harrower;
+    // Bugs
+    public static UnitType hatchling, malign;
+    // Predators
+    public static UnitType leacher, ripper;
 
     /** Vanilla unit name -> Alien replacement, used to convert generated waves. */
     private static final ObjectMap<String, UnitType> replacements = new ObjectMap<>();
@@ -38,102 +40,118 @@ public final class SnAliens {
     private SnAliens() {}
 
     public static void load() {
-        // ---------------- ground ----------------
-        spawnling = walker("spawnling", 4, 140f, 1.1f, 7f, 0f);
-        spawnling.speed = 1.15f;
-        spawnling.legLength = 6f;
-        spawnling.weapons.add(new Weapon() {{
-            shootOnDeath = true;
-            reload = 24f;
-            shootCone = 180f;
-            x = 0f;
-            mirror = false;
-            shootSound = Sounds.none;
-            bullet = new BulletType() {{
-                collidesTiles = false;
-                collides = false;
-                hitSound = Sounds.none;
-                rangeOverride = 28f;
-                hitEffect = Fx.sapped;
-                speed = 0f;
-                splashDamageRadius = 44f;
-                instantDisappear = true;
-                splashDamage = 75f;
-                killShooter = true;
-                hittable = false;
-                collidesAir = true;
-            }};
-        }});
+        // ================= Bugs =================
 
-        skitter = walker("skitter", 4, 170f, 0.6f, 9f, 0f);
-        skitter.weapons.add(spit(20f, 9f, 2.6f, 55f, 3f));
-
-        stalker = walker("stalker", 4, 520f, 0.5f, 13f, 3f);
-        stalker.weapons.add(spit(30f, 18f, 3f, 60f, 6f));
-
-        brute = walker("brute", 6, 1000f, 0.42f, 18f, 6f);
-        brute.weapons.add(new Weapon() {{
-            reload = 70f;
-            x = 0f;
-            y = 0f;
-            mirror = false;
-            shootSound = Sounds.shootLancer;
-            bullet = new ArtilleryBulletType(2.6f, 10f) {{
-                lifetime = 85f;
-                width = height = 14f;
-                collidesTiles = false;
-                splashDamageRadius = 34f;
-                splashDamage = 55f;
-                backColor = GLOW_DARK;
-                frontColor = GLOW;
-                hitColor = GLOW;
-                hitEffect = Fx.sapped;
-            }};
-        }});
-        brute.weapons.add(spit(26f, 14f, 3f, 50f, 9f));
-
-        // ---------------- air ----------------
-        wisp = flyer("wisp", 70f, 3.6f, 8f, 0f);
-        wisp.circleTarget = true;
-        wisp.weapons.add(spit(16f, 6f, 3f, 45f, 2f));
-
-        shrike = flyer("shrike", 340f, 2.4f, 13f, 1f);
-        shrike.weapons.add(spit(24f, 14f, 3.2f, 50f, 5f));
-
-        harrower = flyer("harrower", 700f, 1.7f, 19f, 5f);
-        harrower.weapons.add(new Weapon() {{
-            reload = 45f;
-            x = 6f;
-            y = 0f;
+        // T1: weak, fast and annoying. Rapid little acid spits.
+        hatchling = walker("hatchling", 4, 130f, 0.95f, 8f, 0f);
+        hatchling.weapons.add(new Weapon() {{
+            reload = 13f;
+            x = 2.5f;
+            y = 2f;
             alternate = true;
             shootSound = Sounds.shootLancer;
-            bullet = new BasicBulletType(3.2f, 32f) {{
-                width = 9f;
-                height = 13f;
-                lifetime = 55f;
-                homingPower = 0.06f;
-                splashDamageRadius = 22f;
-                splashDamage = 20f;
-                backColor = GLOW_DARK;
-                frontColor = GLOW;
-                hitColor = GLOW;
-                trailColor = GLOW_DARK;
-                trailLength = 6;
-                trailWidth = 2f;
+            bullet = new BasicBulletType(3.2f, 6f) {{
+                width = 6f;
+                height = 8f;
+                lifetime = 42f;
+                backColor = BUG_GLOW_DARK;
+                frontColor = BUG_GLOW;
+                hitColor = BUG_GLOW;
+                hitEffect = Fx.hitLaser;
             }};
         }});
 
-        // Wave replacements: vanilla tiers map onto Alien tiers.
-        map(spawnling, "crawler");
-        map(skitter, "dagger", "nova", "risso", "retusa");
-        map(stalker, "mace", "pulsar", "atrax", "minke", "oxynoe");
-        map(brute, "fortress", "quasar", "spiroct", "bryde", "cyerce");
-        map(brute, "scepter", "vela", "arkyid", "sei", "aegires");
-        map(brute, "reign", "corvus", "toxopid", "omura", "navanax");
-                map(shrike, "horizon", "poly");
-        map(harrower, "zenith", "mega");
-        map(harrower, "antumbra", "eclipse", "quad", "oct");
-        map(wisp, "flare", "mono");
+        // T2: tougher. Lobs purple orbs that burst into a ring of smaller orbs.
+        malign = walker("malign", 4, 560f, 0.55f, 14f, 3f);
+        malign.weapons.add(new Weapon() {{
+            reload = 48f;
+            x = 0f;
+            y = 4f;
+            mirror = false;
+            shootSound = Sounds.shootLancer;
+            bullet = new BasicBulletType(2.4f, 16f) {{
+                sprite = "circle-bullet";
+                width = height = 12f;
+                shrinkY = 0f;
+                lifetime = 62f;
+                backColor = BUG_GLOW_DARK;
+                frontColor = BUG_GLOW;
+                hitColor = BUG_GLOW;
+                hitEffect = Fx.hitLaser;
+                trailColor = BUG_GLOW_DARK;
+                trailLength = 6;
+                trailWidth = 2.5f;
+                fragBullets = 5;
+                fragRandomSpread = 0f;
+                fragSpread = 72f;
+                fragVelocityMin = 0.9f;
+                fragBullet = new BasicBulletType(2.6f, 8f) {{
+                    sprite = "circle-bullet";
+                    width = height = 7f;
+                    shrinkY = 0f;
+                    lifetime = 20f;
+                    backColor = BUG_GLOW_DARK;
+                    frontColor = BUG_GLOW;
+                    hitColor = BUG_GLOW;
+                    hitEffect = Fx.hitLaser;
+                }};
+            }};
+        }});
+
+        // ================= Predators =================
+
+        // T1: tough brawler. Short-range bites heal it for 60% of the damage dealt.
+        leacher = walker("leacher", 6, 900f, 0.5f, 16f, 6f);
+        leacher.weapons.add(new Weapon() {{
+            reload = 24f;
+            x = 4f;
+            y = 6f;
+            alternate = true;
+            shootSound = Sounds.shootLancer;
+            bullet = new BasicBulletType(3f, 24f) {{
+                width = 9f;
+                height = 10f;
+                lifetime = 17f;
+                lifesteal = 0.6f;
+                backColor = PRED_GLOW_DARK;
+                frontColor = PRED_GLOW;
+                hitColor = PRED_GLOW;
+                hitEffect = Fx.hitLaser;
+            }};
+        }});
+
+        // T2: heavy hitter with a sustained Vela-style beam. Slows itself while firing.
+        ripper = walker("ripper", 6, 1700f, 0.4f, 22f, 8f);
+        ripper.weapons.add(new Weapon() {{
+            reload = 170f;
+            x = 0f;
+            y = 9f;
+            mirror = false;
+            continuous = true;
+            cooldownTime = 180f;
+            shake = 1.5f;
+            shootSound = Sounds.beamLustre;
+            shootStatus = StatusEffects.slow;
+            shootStatusDuration = 110f;
+            bullet = new ContinuousLaserBulletType(13f) {{
+                length = 130f;
+                lifetime = 100f;
+                width = 6f;
+                shake = 1f;
+                largeHit = false;
+                hitEffect = Fx.hitLaser;
+                hitColor = PRED_GLOW;
+                colors = new Color[]{PRED_GLOW_DARK.cpy().a(0.4f), PRED_GLOW_DARK, PRED_GLOW, Color.white};
+                drawSize = 300f;
+            }};
+        }});
+
+        // Wave conversion: light/fast/air vanilla units become Bugs, heavy ones become Predators.
+        map(hatchling, "dagger", "crawler", "flare", "nova", "mono", "poly", "risso", "retusa");
+        map(malign, "horizon", "zenith", "atrax", "mega", "antumbra", "eclipse", "quad", "oct", "oxynoe");
+        map(leacher, "mace", "pulsar", "minke", "cyerce");
+        map(ripper, "fortress", "quasar", "spiroct", "scepter", "vela", "arkyid", "reign", "corvus", "toxopid",
+            "bryde", "sei", "omura", "aegires", "navanax");
     }
 
     private static UnitType walker(String name, int legs, float health, float speed, float hitSize, float armor) {
@@ -151,76 +169,37 @@ public final class SnAliens {
         t.legExtension = -2f;
         t.legSpeed = 0.12f;
         t.legPhysicsLayer = false;
-        t.allowLegStep = hitSize >= 18f;
+        t.allowLegStep = false;
         t.hovering = true;
         t.rotateSpeed = 4f;
         t.shadowElevation = 0.2f;
-        t.groundLayer = mindustry.graphics.Layer.legUnit;
-        t.drawCell = true;
+        t.groundLayer = Layer.legUnit;
         return t;
-    }
-
-    private static UnitType flyer(String name, float health, float speed, float hitSize, float armor) {
-        UnitType t = new UnitType(name);
-        t.constructor = UnitEntity::create;
-        t.flying = true;
-        t.health = health;
-        t.speed = speed;
-        t.hitSize = hitSize;
-        t.armor = armor;
-        t.outlineColor = OUTLINE;
-        t.accel = 0.08f;
-        t.drag = 0.03f;
-        t.rotateSpeed = 6f;
-        t.engineOffset = hitSize * 0.55f;
-        t.engineSize = Math.max(1.6f, hitSize * 0.14f);
-        t.engineColor = GLOW;
-        t.lowAltitude = hitSize >= 30f;
-        t.targetGround = true;
-        return t;
-    }
-
-    /** Twin violet acid bolts from either side of the body. */
-    private static Weapon spit(float reload, float damage, float speed, float lifetime, float x) {
-        return new Weapon() {{
-            this.reload = reload;
-            this.x = x;
-            this.y = 2f;
-            mirror = x > 0f;
-            alternate = true;
-            shootSound = Sounds.shootLancer;
-            bullet = new BasicBulletType(speed, damage) {{
-                width = 7f + damage * 0.12f;
-                height = 9f + damage * 0.15f;
-                this.lifetime = lifetime;
-                backColor = GLOW_DARK;
-                frontColor = GLOW;
-                hitColor = GLOW;
-                hitEffect = Fx.hitLaser;
-            }};
-        }};
     }
 
     private static void map(UnitType alien, String... vanilla) {
         for (String v : vanilla) replacements.put(v, alien);
     }
 
-    /** Swaps vanilla units in wave spawn groups for their Alien equivalents. */
+    /** Swaps non-Alien units in wave spawn groups (vanilla, or Aliens since removed) for current Aliens. */
     public static void convertWaves(Seq<SpawnGroup> groups) {
         if (groups == null) return;
         for (SpawnGroup g : groups) {
-            if (g.type == null || g.type.name.startsWith("supernova-")) continue;
-            UnitType alien = replacements.get(g.type.name, skitter);
-            g.type = alien;
+            if (g.type != null && isCurrentAlien(g.type)) continue;
+            g.type = g.type == null ? hatchling : replacements.get(g.type.name, hatchling);
         }
     }
 
-    /** True if any wave group still uses a vanilla unit. */
-    public static boolean hasVanillaUnits(Seq<SpawnGroup> groups) {
+    /** True if any wave group uses something other than a current Alien unit. */
+    public static boolean needsConversion(Seq<SpawnGroup> groups) {
         if (groups == null) return false;
         for (SpawnGroup g : groups) {
-            if (g.type != null && !g.type.name.startsWith("supernova-") && Vars.content.unit(g.type.name) != null) return true;
+            if (g.type == null || !isCurrentAlien(g.type)) return true;
         }
         return false;
+    }
+
+    private static boolean isCurrentAlien(UnitType t) {
+        return t == hatchling || t == malign || t == leacher || t == ripper;
     }
 }

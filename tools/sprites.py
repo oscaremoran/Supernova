@@ -633,9 +633,10 @@ GLOW = hexc("b98cff")
 GLOW_DARK = hexc("6a3fd1")
 
 
-def glow_eye(d, x, y, r):
-    d.ellipse([x - r - 1, y - r - 1, x + r + 1, y + r + 1], fill=GLOW_DARK)
-    d.ellipse([x - r, y - r, x + r, y + r], fill=GLOW)
+def glow_eye(d, x, y, r, glow=None, glow_dark=None):
+    glow, glow_dark = glow or GLOW, glow_dark or GLOW_DARK
+    d.ellipse([x - r - 1, y - r - 1, x + r + 1, y + r + 1], fill=glow_dark)
+    d.ellipse([x - r, y - r, x + r, y + r], fill=glow)
     d.point([(x - r / 2, y - r / 2)], fill=(255, 255, 255, 255))
 
 
@@ -646,8 +647,9 @@ def segment(d, cx, cy, rx, ry):
     d.arc([cx - rx + 1, cy - ry + 1, cx + rx - 1, cy + ry - 1], 180, 270, fill=SHELL_LIGHT, width=max(1, int(rx / 5)))
 
 
-def walker_sprites(name, size, segs, eyes, spikes=0):
+def walker_sprites(name, size, segs, eyes, spikes=0, glow=None, glow_dark=None, jaws=1.0, sacs=0):
     """Top-down insectoid alien. segs = [(dy, rx, ry), ...] from head (top) to abdomen."""
+    glow, glow_dark = glow or GLOW, glow_dark or GLOW_DARK
     im, d = new(size)
     c = size / 2
     centres = []
@@ -658,13 +660,18 @@ def walker_sprites(name, size, segs, eyes, spikes=0):
     # glowing vein down the abdomen
     if len(centres) > 1:
         ay, arx, ary = centres[-1]
-        d.line([(c, ay - ary * 0.6), (c, ay + ary * 0.6)], fill=GLOW_DARK, width=max(1, int(size / 24)))
-        d.line([(c, ay - ary * 0.4), (c, ay + ary * 0.4)], fill=GLOW, width=1)
+        d.line([(c, ay - ary * 0.6), (c, ay + ary * 0.6)], fill=glow_dark, width=max(1, int(size / 24)))
+        d.line([(c, ay - ary * 0.4), (c, ay + ary * 0.4)], fill=glow, width=1)
+        # glowing sacs on the abdomen (Malign's orbs)
+        for k in range(sacs):
+            sx = (k - (sacs - 1) / 2) * arx * 0.55
+            d.ellipse([c + sx - arx * 0.2, ay - ary * 0.1, c + sx + arx * 0.2, ay + ary * 0.4], fill=glow_dark)
+            d.ellipse([c + sx - arx * 0.12, ay, c + sx + arx * 0.12, ay + ary * 0.28], fill=glow)
     # mandibles + spikes
     hy, hrx, hry = centres[0]
-    m = max(2, hrx * 0.5)
+    m = max(2, hrx * 0.5) * jaws
     for sx in (-1, 1):
-        d.polygon([(c + sx * hrx * 0.4, hy - hry * 0.6), (c + sx * hrx * 0.7, hy - hry - m), (c + sx * hrx * 0.15, hy - hry * 0.8)], fill=SHELL_LIGHT)
+        d.polygon([(c + sx * hrx * 0.4, hy - hry * 0.6), (c + sx * hrx * 0.7 * jaws, hy - hry - m), (c + sx * hrx * 0.15, hy - hry * 0.8)], fill=SHELL_LIGHT)
     for k in range(spikes):
         ty, trx, tr = centres[min(1 + k % max(1, len(centres) - 1), len(centres) - 1)]
         for sx in (-1, 1):
@@ -673,7 +680,7 @@ def walker_sprites(name, size, segs, eyes, spikes=0):
     er = max(1, int(hrx / 4))
     for i in range(eyes):
         ex = c + (i - (eyes - 1) / 2) * (er * 2.6)
-        glow_eye(d, ex, hy - hry * 0.2, er)
+        glow_eye(d, ex, hy - hry * 0.2, er, glow, glow_dark)
     save(im, UNITS, name)
 
     # cell (team colour): plate down the thorax
@@ -692,13 +699,13 @@ def walker_sprites(name, size, segs, eyes, spikes=0):
         ld = ImageDraw.Draw(lim)
         ld.rectangle([0, 1, ln - 1, thick], fill=col)
         ld.line([(0, 1), (ln - 1, 1)], fill=SHELL_LIGHT)
-        ld.line([(ln // 3, thick // 2 + 1), (ln * 2 // 3, thick // 2 + 1)], fill=GLOW_DARK)
+        ld.line([(ln // 3, thick // 2 + 1), (ln * 2 // 3, thick // 2 + 1)], fill=glow_dark)
         save(lim, UNITS, name + suffix)
     j = th + 3
     jim = Image.new("RGBA", (j, j), (0, 0, 0, 0))
     jd = ImageDraw.Draw(jim)
     jd.ellipse([0, 0, j - 1, j - 1], fill=SHELL)
-    jd.ellipse([j // 3, j // 3, j - 1 - j // 3, j - 1 - j // 3], fill=GLOW)
+    jd.ellipse([j // 3, j // 3, j - 1 - j // 3, j - 1 - j // 3], fill=glow)
     save(jim, UNITS, name + "-joint")
     f = th + 4
     fim = Image.new("RGBA", (f, f), (0, 0, 0, 0))
@@ -740,15 +747,19 @@ def flyer_sprite(name, size, wing, body_len, eyes, tail=0):
     save(cim, UNITS, name + "-cell")
 
 
-def aliens():
-    walker_sprites("spawnling", 20, [(-3, 4, 4), (3, 5, 5)], 2)
-    walker_sprites("skitter", 28, [(-7, 5, 4), (-1, 6, 5), (7, 7, 6)], 2)
-    walker_sprites("stalker", 40, [(-11, 7, 5), (-3, 9, 6), (9, 11, 9)], 4, spikes=1)
-    walker_sprites("brute", 52, [(-15, 9, 7), (-4, 13, 8), (12, 16, 12)], 4, spikes=2)
-    flyer_sprite("wisp", 28, 12, 20, 2, tail=2)
-    flyer_sprite("shrike", 40, 18, 28, 2, tail=4)
-    flyer_sprite("harrower", 56, 26, 38, 4, tail=6)
+PRED_GLOW = hexc("ff4d6a")
+PRED_GLOW_DARK = hexc("a3203a")
 
+
+def aliens():
+    # Bugs: violet glow
+    walker_sprites("hatchling", 22, [(-4, 4, 4), (3, 5, 5)], 2)
+    walker_sprites("malign", 40, [(-11, 7, 5), (-3, 9, 6), (9, 12, 9)], 4, spikes=1, sacs=3)
+    # Predators: crimson glow, big jaws
+    walker_sprites("leacher", 44, [(-12, 9, 7), (-2, 12, 7), (10, 13, 9)], 2, spikes=2,
+                   glow=PRED_GLOW, glow_dark=PRED_GLOW_DARK, jaws=1.6)
+    walker_sprites("ripper", 60, [(-18, 11, 8), (-5, 17, 10), (13, 19, 13)], 4, spikes=3,
+                   glow=PRED_GLOW, glow_dark=PRED_GLOW_DARK, jaws=1.4)
 
 if __name__ == "__main__":
     items()

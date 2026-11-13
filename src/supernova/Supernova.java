@@ -9,6 +9,7 @@ import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.WorldLoadEvent;
 import mindustry.mod.Mod;
 import supernova.content.*;
+import supernova.world.EditorVisibility;
 import supernova.world.SectorNames;
 import supernova.world.gen.AphelionTutorial;
 
@@ -16,7 +17,10 @@ public class Supernova extends Mod {
 
     public Supernova() {
         Log.info("[Supernova] Constructed.");
-        Events.on(ClientLoadEvent.class, e -> SectorNames.apply(SnPlanets.aphelion));
+        Events.on(ClientLoadEvent.class, e -> {
+            SectorNames.apply(SnPlanets.aphelion);
+            EditorVisibility.init();
+        });
         // Sector info can be reloaded from disk; re-apply names (only fills in missing ones).
         Events.on(WorldLoadEvent.class, e -> {
             SectorNames.apply(SnPlanets.aphelion);
@@ -28,9 +32,9 @@ public class Supernova extends Mod {
                     }
                 }
             }
-            // Older Aphelion saves may still have vanilla units in their waves; swap in the Aliens.
+            // Older Aphelion saves may have vanilla (or since-removed) units in their waves; swap in current Aliens.
             if (!Vars.net.client() && Vars.state.rules.sector != null && Vars.state.rules.sector.planet == SnPlanets.aphelion
-                && SnAliens.hasVanillaUnits(Vars.state.rules.spawns)) {
+                && SnAliens.needsConversion(Vars.state.rules.spawns)) {
                 SnAliens.convertWaves(Vars.state.rules.spawns);
             }
             // Landing Site tutorial: added on first load, and replaced in saves with an older version (host/singleplayer only).

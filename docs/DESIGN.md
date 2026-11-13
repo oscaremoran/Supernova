@@ -69,9 +69,9 @@
 
 ## 6. The Aliens
 
-- **Ground** (legged walkers): Spawnling (suicide swarm), Skitter, Stalker, Brute. ✅
-- **Air**: Wisp, Shrike, Harrower. ✅
-- Generated waves convert vanilla units into Aliens by tier. Vanilla T4–T5 become Brutes and Harrowers (T4–T5 Aliens were cut from the current scope).
+- **Bugs** (light, violet glow): Hatchling (T1), Malign (T2, splitting orbs). ✅
+- **Predators** (beatdown, crimson glow): Leacher (T1, lifesteal), Ripper (T2, Vela-style beam). ✅
+- Generated waves convert vanilla units: light, fast and air become Bugs; heavy become Predators.
 - Visual language: black chitin and armored shells with faint violet bioluminescence. This keeps them readable against dark terrain while staying "black".
 - They appear in sector waves, enemy-base sectors, and later as interceptors against orbital missions.
 
@@ -101,7 +101,7 @@
 | M2 | Orbital Uplink and the mission system (multiplayer-safe) | 🟡 Orbital Uplink in (3 zones); in-game test pending |
 | M3 | Mining units T1–T3 | 🟡 Pioneer, Prospector, Surveyor, Hauler + Drone Bay; in-game test pending |
 | M4 | Planet Aphelion: generator, first 3 sectors, tech tree | 🟡 planet + the Prime System star, procedural sectors, tech tree, survival kit; hand-made sectors TBD |
-| M5 | Aliens unit tree and wave AI | 🟡 7 Alien units with sprites; waves converted; in-game test pending |
+| M5 | Aliens unit tree and wave AI | 🟡 Bugs + Predators (4 units) with sprites; waves converted; in-game test pending |
 | M6 | Mining units T4–T5, deep belt, endgame tier | ⏸ out of current scope |
 
 ## 10. Known placeholders

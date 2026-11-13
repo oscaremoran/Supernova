@@ -108,10 +108,18 @@ Switching zones aborts the current mission. If the uplink's storage is full, it 
 
 ## 5. The Aliens
 
-Black chitin with violet glowing eyes and veins. Ground units are legged walkers.
+Black chitin, all legged walkers, in two unit trees. **Bugs** glow violet; **Predators** glow crimson.
 
-| Unit | Type | HP | Attack |
-|---|---|---|---|
+| Tree | Unit | Tier | HP / Armor | Attack |
+|---|---|---|---|---|
+| Bugs (light) | **Hatchling** | T1 | 130 / 0 | Fast, rapid little acid spits. Weak but annoying. |
+| Bugs (light) | **Malign** | T2 | 560 / 3 | Lobs purple orbs that **split into a ring of 5 smaller orbs**. |
+| Predators (beatdown) | **Leacher** | T1 | 900 / 6 | Short-range bites with **lifesteal** (heals 60% of damage dealt). |
+| Predators (beatdown) | **Ripper** | T2 | 1,700 / 8 | **Vela-style sustained crimson beam**. Slows itself while firing. |
+
+Waves are generated from vanilla wave patterns, then converted: light, fast and air units become Bugs; heavy units become Predators.
+
+---|---|---|---|
 | **Spawnling** | Ground swarm | 140 | Bursts in acid when close (75 splash damage) |
 | **Skitter** | Ground T1 | 170 | Acid bolts |
 | **Stalker** | Ground T2 | 520 | Heavier acid bolts, armored |
