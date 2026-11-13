@@ -10,15 +10,15 @@ import mindustry.type.Planet;
 import supernova.world.gen.AphelionPlanetGenerator;
 
 public final class SnPlanets {
-    /** Aphelion's dying star. Its own solar system, separate from Serpulo's. */
-    public static Planet ves;
+    /** Aphelion's dying star, at the center of the Prime System (separate from Serpulo's). */
+    public static Planet prime;
     /** The Supernova campaign planet. */
     public static Planet aphelion;
 
     private SnPlanets() {}
 
     public static void load() {
-        ves = new Planet("ves", null, 4.5f) {{
+        prime = new Planet("prime", null, 4.5f) {{
             bloom = true;
             accessible = false;
             meshLoader = () -> new SunMesh(this, 4, 5, 0.3, 1.7, 1.2, 1, 1.1f,
@@ -26,7 +26,7 @@ public final class SnPlanets {
                 Color.valueOf("ffd08a"), Color.valueOf("ff9a6b"), Color.valueOf("e8553d"));
         }};
 
-        aphelion = new Planet("aphelion", ves, 1f, 3) {{
+        aphelion = new Planet("aphelion", prime, 1f, 3) {{
             generator = new AphelionPlanetGenerator();
             meshLoader = () -> new HexMesh(this, 6);
             cloudMeshLoader = () -> new MultiMesh(
