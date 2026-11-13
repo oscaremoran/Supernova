@@ -28,6 +28,8 @@
 
 ### Tiers
 
+> **Current scope (2026-11-13):** content stops at the silicon-equivalent tier (Conductium). Novium, Singularity Composite, the Singularity Forge and the Deep Belt were cut and may come back later.
+
 | Tier | Item | Source | Main uses |
 |---|---|---|---|
 | 1 | **Ferrite** ✅ | Surface ore | Basic construction, walls, conveyors |
@@ -36,9 +38,7 @@
 | 2 | **Ferrosteel** ✅ | Smelter: ferrite + quartzite | Structural tier 2 and turrets |
 | 2 | **Iridium** ✅ | **Belt only** (metallic asteroids) | Hard alloys, drill heads, armor |
 | 2 | **Cryo-Ice** ✅ | **Belt only** (icy asteroids) | Melted into Volatiles |
-| 3 | **Conductium** ✅ | Fabricator: cobaltine + iridium | Advanced electronics, logic, shields |
-| 3 | **Novium** ✅ | **Belt only**, rare | Endgame power and weapons |
-| 4 | **Singularity Composite** ✅ | Ferrosteel + conductium + novium | Top-tier units, cores, superweapons |
+| 3 | **Conductium** ✅ | Fabricator: cobaltine + iridium | The "silicon" tier: advanced electronics, logic, shields |
 
 **Fluid: Volatiles** ✅ (from Cryo-Ice). Used as propellant for orbital missions and as fuel and coolant. This creates the core loop: **the belt pays for itself**. Ice from orbit becomes the propellant for the next launch.
 
@@ -48,11 +48,10 @@
 
 ### 5.1 Orbital mining stations
 
-- **Orbital Uplink** ✅ (3×3; a second tier is TBD): runs missions on power alone. Volatiles are an optional booster (2.5× speed) and are **required** for the Deep zone. This lets players start without propellant, while the belt's ice speeds up future missions.
+- **Orbital Uplink** ✅ (3×3; a second tier is TBD): runs missions on power alone, with Metallic and Icy zones. Volatiles are an optional booster (2.5× speed). The block also supports zones that *require* propellant, for a future Deep Belt.
 - A mission has a duration, a cargo capacity and a yield table per zone:
   - *Metallic*: iridium-heavy
   - *Icy*: cryo-ice-heavy
-  - *Deep*: rare novium, longer and riskier
 - Cargo returns as raw items into the uplink's storage. From there it goes out by conveyor or to the core.
 - **Upgrades:** extra drone bays (more capacity), guidance arrays (shorter missions), and cargo returned as *asteroid chunks* that must be cracked on the surface (more yield, more logistics).
 - **Risk (later):** Alien interception events can lose part of the cargo. Defensive escort modules reduce the loss.
@@ -70,7 +69,9 @@
 
 ## 6. The Aliens
 
-- Their own unit tree: ground, air and naval/burrowing branches (TBD, decided at the faction milestone).
+- **Ground** (legged walkers): Spawnling (suicide swarm), Skitter, Stalker, Brute. ✅
+- **Air**: Wisp, Shrike, Harrower. ✅
+- Generated waves convert vanilla units into Aliens by tier. Vanilla T4–T5 become Brutes and Harrowers (T4–T5 Aliens were cut from the current scope).
 - Visual language: black chitin and armored shells with faint violet bioluminescence. This keeps them readable against dark terrain while staying "black".
 - They appear in sector waves, enemy-base sectors, and later as interceptors against orbital missions.
 
@@ -100,12 +101,12 @@
 | M2 | Orbital Uplink and the mission system (multiplayer-safe) | 🟡 Orbital Uplink in (3 zones); in-game test pending |
 | M3 | Mining units T1–T3 | 🟡 Pioneer, Prospector, Surveyor, Hauler + Drone Bay; in-game test pending |
 | M4 | Planet Aphelion: generator, first 3 sectors, tech tree | 🟡 planet + the Prime System star, procedural sectors, tech tree, survival kit; hand-made sectors TBD |
-| M5 | Aliens unit tree and wave AI | |
-| M6 | Mining units T4–T5, deep belt, endgame tier | |
+| M5 | Aliens unit tree and wave AI | 🟡 7 Alien units with sprites; waves converted; in-game test pending |
+| M6 | Mining units T4–T5, deep belt, endgame tier | ⏸ out of current scope |
 
 ## 10. Known placeholders
 
 - The ferrite conveyor and bridge pieces keep the vanilla *layout* (required by the game's connection logic), repainted in Supernova colors by `tools/conveyor.py`.
-- Alien waves and enemy bases use **vanilla units and buildings** on the Aliens team until M5.
+- Alien **enemy bases** still use vanilla buildings on the Aliens team.
 - Sectors are procedural, from a re-skinned Serpulo generator. Hand-made story sectors are TBD.
 - Tutorial: an 8-step objectives chain on the Landing Site (`AphelionTutorial`).

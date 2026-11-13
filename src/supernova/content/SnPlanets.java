@@ -58,9 +58,11 @@ public final class SnPlanets {
         // so vanilla blocks (copper, lead...) stay off Aphelion and ours stay off Serpulo/Erekir.
         for (UnlockableContent c : new UnlockableContent[]{
             SnItems.ferrite, SnItems.cobaltine, SnItems.quartzite, SnItems.ferrosteel, SnItems.iridium,
-            SnItems.cryoIce, SnItems.conductium, SnItems.novium, SnItems.singularityComposite,
+            SnItems.cryoIce, SnItems.conductium,
             SnLiquids.volatiles,
-            SnUnits.pioneer, SnUnits.prospector, SnUnits.surveyor, SnUnits.hauler
+            SnUnits.pioneer, SnUnits.prospector, SnUnits.surveyor, SnUnits.hauler,
+            SnAliens.spawnling, SnAliens.skitter, SnAliens.stalker, SnAliens.brute,
+            SnAliens.wisp, SnAliens.shrike, SnAliens.harrower
         }) {
             c.shownPlanets.add(aphelion);
         }

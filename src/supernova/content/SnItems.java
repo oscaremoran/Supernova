@@ -12,10 +12,8 @@ public final class SnItems {
     public static Item ferrite, cobaltine, quartzite;
     // Tier 2
     public static Item ferrosteel, iridium, cryoIce;
-    // Tier 3
-    public static Item conductium, novium;
-    // Tier 4
-    public static Item singularityComposite;
+    // Tier 3 (the "silicon" tier: first advanced electronics)
+    public static Item conductium;
 
     private SnItems() {}
 
@@ -54,17 +52,6 @@ public final class SnItems {
         conductium = new Item("conductium", Color.valueOf("e0b04a")) {{
             cost = 1.8f;
             charge = 0.15f;
-        }};
-
-        novium = new Item("novium", Color.valueOf("ff7a3d")) {{
-            hardness = 5;
-            cost = 2.5f;
-            radioactivity = 0.4f;
-            charge = 0.5f;
-        }};
-
-        singularityComposite = new Item("singularity-composite", Color.valueOf("3b2d5c")) {{
-            cost = 3.5f;
         }};
     }
 }

@@ -26,9 +26,7 @@ public final class SnTechTree {
                                 node(iceMelter, () -> {
                                     node(volatileBurner);
                                 });
-                                node(conductiumFabricator, () -> {
-                                    node(singularityForge);
-                                });
+                                node(conductiumFabricator);
                             });
                         });
                     });
@@ -54,11 +52,7 @@ public final class SnTechTree {
             nodeProduce(ferrite, () -> {
                 nodeProduce(cobaltine, () -> {
                     nodeProduce(iridium, () -> {
-                        nodeProduce(conductium, () -> {
-                            nodeProduce(novium, () -> {
-                                nodeProduce(singularityComposite, () -> {});
-                            });
-                        });
+                        nodeProduce(conductium, () -> {});
                     });
                 });
                 nodeProduce(quartzite, () -> {

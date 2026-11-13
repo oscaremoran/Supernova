@@ -12,6 +12,7 @@ import mindustry.world.Tile;
 import mindustry.world.blocks.environment.Floor;
 import mindustry.world.blocks.environment.StaticWall;
 import mindustry.world.blocks.storage.CoreBlock;
+import supernova.content.SnAliens;
 import supernova.content.SnBlocks;
 import supernova.content.SnItems;
 import supernova.content.SnTeams;
@@ -95,6 +96,7 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
     protected void generate() {
         Vars.state.rules.waveTeam = SnTeams.aliens;
         super.generate();
+        SnAliens.convertWaves(Vars.state.rules.spawns);
         convertTerrain();
         replaceStartingCore();
         if (sector != null && sector == sector.planet.getStartSector()) {

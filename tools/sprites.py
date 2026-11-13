@@ -166,19 +166,6 @@ def item_gem(name, base, glow):
     save(im, ITEMS, name)
 
 
-def item_singularity(name):
-    im, d = new(32)
-    d.ellipse([4, 4, 28, 28], fill=hexc("7d5cff", 60))
-    d.ellipse([8, 8, 24, 24], fill=hexc("1a1230"))
-    d.ellipse([10, 10, 22, 22], fill=hexc("3b2d5c"))
-    d.ellipse([13, 13, 19, 19], fill=hexc("0a0614"))
-    # accretion ring
-    d.arc([2, 11, 30, 21], 200, 340, fill=hexc("c9b6ff"), width=2)
-    d.arc([2, 11, 30, 21], 20, 160, fill=hexc("9a7cf0"), width=2)
-    d.point([(12, 11)], fill=(255, 255, 255, 255))
-    save(im, ITEMS, name)
-
-
 def liquid_icon(name, base):
     """A droplet icon for a liquid."""
     im, d = new(32)
@@ -213,8 +200,6 @@ def items():
     big_item("ferrosteel", lambda: item_ingot("ferrosteel", "6f7682"))
     big_item("conductium", lambda: item_ingot("conductium", "e0b04a", stripe="4f74c9"))
     big_item("cryo-ice", lambda: item_cube("cryo-ice", "a8e6f5"))
-    big_item("novium", lambda: item_gem("novium", "ff7a3d", "ffb36b"))
-    big_item("singularity-composite", lambda: item_singularity("singularity-composite"))
     big_item("volatiles", lambda: liquid_icon("volatiles", "b8f0ff"))
 
 
@@ -335,21 +320,6 @@ def fabricator():
     d.rectangle([24, 24, 39, 39], fill=gold, outline=OUTLINE)
     d.rectangle([28, 28, 35, 35], fill=hexc("fff0b8"))
     save(im, BLOCKS, "conductium-fabricator")
-
-
-def forge():
-    im, d, s = plate(3)
-    c = s // 2
-    d.ellipse([c - 36, c - 36, c + 36, c + 36], fill=FRAME_DARK)
-    d.ellipse([c - 33, c - 33, c + 33, c + 33], fill=hexc("140e22"))
-    d.ellipse([c - 26, c - 26, c + 26, c + 26], fill=hexc("7d5cff", 90))
-    d.ellipse([c - 16, c - 16, c + 16, c + 16], fill=hexc("3b2d5c"))
-    d.ellipse([c - 8, c - 8, c + 8, c + 8], fill=hexc("0a0614"))
-    d.arc([c - 30, c - 10, c + 30, c + 10], 0, 360, fill=hexc("c9b6ff"), width=2)
-    # containment pylons
-    for px, py in ((c, 10), (c, s - 11), (10, c), (s - 11, c)):
-        d.rectangle([px - 4, py - 4, px + 4, py + 4], fill=hexc("ff7a3d"), outline=OUTLINE)
-    save(im, BLOCKS, "singularity-forge")
 
 
 def uplink():
@@ -638,7 +608,6 @@ def blocks():
     smelter()
     melter()
     fabricator()
-    forge()
     uplink()
     junction()
     router()
@@ -655,9 +624,136 @@ def blocks():
     core_outpost()
 
 
+# ---------------------------------------------------------------- aliens
+
+SHELL = hexc("1e1a24")
+SHELL_MID = hexc("2c2536")
+SHELL_LIGHT = hexc("453a57")
+GLOW = hexc("b98cff")
+GLOW_DARK = hexc("6a3fd1")
+
+
+def glow_eye(d, x, y, r):
+    d.ellipse([x - r - 1, y - r - 1, x + r + 1, y + r + 1], fill=GLOW_DARK)
+    d.ellipse([x - r, y - r, x + r, y + r], fill=GLOW)
+    d.point([(x - r / 2, y - r / 2)], fill=(255, 255, 255, 255))
+
+
+def segment(d, cx, cy, rx, ry):
+    """A chitin plate: dark ellipse, lighter upper-left rim."""
+    d.ellipse([cx - rx, cy - ry, cx + rx, cy + ry], fill=SHELL)
+    d.ellipse([cx - rx + 1, cy - ry + 1, cx + rx - 1, cy + ry - 1], fill=SHELL_MID)
+    d.arc([cx - rx + 1, cy - ry + 1, cx + rx - 1, cy + ry - 1], 180, 270, fill=SHELL_LIGHT, width=max(1, int(rx / 5)))
+
+
+def walker_sprites(name, size, segs, eyes, spikes=0):
+    """Top-down insectoid alien. segs = [(dy, rx, ry), ...] from head (top) to abdomen."""
+    im, d = new(size)
+    c = size / 2
+    centres = []
+    for dy, rx, ry in segs:
+        cy = c + dy
+        segment(d, c, cy, rx, ry)
+        centres.append((cy, rx, ry))
+    # glowing vein down the abdomen
+    if len(centres) > 1:
+        ay, arx, ary = centres[-1]
+        d.line([(c, ay - ary * 0.6), (c, ay + ary * 0.6)], fill=GLOW_DARK, width=max(1, int(size / 24)))
+        d.line([(c, ay - ary * 0.4), (c, ay + ary * 0.4)], fill=GLOW, width=1)
+    # mandibles + spikes
+    hy, hrx, hry = centres[0]
+    m = max(2, hrx * 0.5)
+    for sx in (-1, 1):
+        d.polygon([(c + sx * hrx * 0.4, hy - hry * 0.6), (c + sx * hrx * 0.7, hy - hry - m), (c + sx * hrx * 0.15, hy - hry * 0.8)], fill=SHELL_LIGHT)
+    for k in range(spikes):
+        ty, trx, tr = centres[min(1 + k % max(1, len(centres) - 1), len(centres) - 1)]
+        for sx in (-1, 1):
+            d.polygon([(c + sx * trx * 0.7, ty - tr * 0.3), (c + sx * (trx + size * 0.08), ty - tr * 0.6 - k * 2), (c + sx * trx * 0.8, ty + tr * 0.1)], fill=SHELL_LIGHT)
+    # eyes
+    er = max(1, int(hrx / 4))
+    for i in range(eyes):
+        ex = c + (i - (eyes - 1) / 2) * (er * 2.6)
+        glow_eye(d, ex, hy - hry * 0.2, er)
+    save(im, UNITS, name)
+
+    # cell (team colour): plate down the thorax
+    cim, cd = new(size)
+    if len(centres) > 1:
+        ty, trx, tr = centres[1]
+        cd.ellipse([c - trx * 0.45, ty - tr * 0.5, c + trx * 0.45, ty + tr * 0.5], fill=(255, 255, 255, 255))
+    save(cim, UNITS, name + "-cell")
+
+    # legs: horizontal strips that the game stretches between joints
+    th = max(3, int(size / 10))
+    ln = max(12, int(size * 0.6))
+    for suffix, thick, col in (("-leg", th, SHELL_MID), ("-leg-base", th + 1, SHELL)):
+        lim, ld = new(1)
+        lim = Image.new("RGBA", (ln, thick + 2), (0, 0, 0, 0))
+        ld = ImageDraw.Draw(lim)
+        ld.rectangle([0, 1, ln - 1, thick], fill=col)
+        ld.line([(0, 1), (ln - 1, 1)], fill=SHELL_LIGHT)
+        ld.line([(ln // 3, thick // 2 + 1), (ln * 2 // 3, thick // 2 + 1)], fill=GLOW_DARK)
+        save(lim, UNITS, name + suffix)
+    j = th + 3
+    jim = Image.new("RGBA", (j, j), (0, 0, 0, 0))
+    jd = ImageDraw.Draw(jim)
+    jd.ellipse([0, 0, j - 1, j - 1], fill=SHELL)
+    jd.ellipse([j // 3, j // 3, j - 1 - j // 3, j - 1 - j // 3], fill=GLOW)
+    save(jim, UNITS, name + "-joint")
+    f = th + 4
+    fim = Image.new("RGBA", (f, f), (0, 0, 0, 0))
+    fd = ImageDraw.Draw(fim)
+    fd.polygon([(f / 2, 0), (f - 1, f - 1), (f / 2, f * 0.7), (0, f - 1)], fill=SHELL_LIGHT)
+    save(fim, UNITS, name + "-foot")
+
+
+def flyer_sprite(name, size, wing, body_len, eyes, tail=0):
+    """Top-down winged alien, head up."""
+    im, d = new(size)
+    c = size / 2
+    top = c - body_len / 2
+    # wings: membrane with glowing veins
+    for sx in (-1, 1):
+        pts = [(c + sx * size * 0.08, top + body_len * 0.2),
+               (c + sx * wing, top + body_len * 0.05),
+               (c + sx * wing * 0.92, top + body_len * 0.55),
+               (c + sx * wing * 0.55, top + body_len * 0.75),
+               (c + sx * size * 0.08, top + body_len * 0.7)]
+        d.polygon(pts, fill=SHELL)
+        inner = [(c + (x - c) * 0.86, top + body_len * 0.1 + (y - top - body_len * 0.1) * 0.86) for x, y in pts]
+        d.polygon(inner, fill=SHELL_MID)
+        for t in (0.35, 0.65, 0.9):
+            d.line([(c + sx * size * 0.1, top + body_len * 0.35), (c + sx * wing * t, top + body_len * (0.1 + 0.45 * t))], fill=GLOW_DARK)
+    # body
+    segment(d, c, top + body_len * 0.25, size * 0.1, body_len * 0.22)
+    segment(d, c, top + body_len * 0.62, size * 0.08, body_len * 0.3)
+    if tail:
+        d.polygon([(c - 2, top + body_len * 0.85), (c + 2, top + body_len * 0.85), (c, top + body_len + tail)], fill=SHELL_LIGHT)
+    d.line([(c, top + body_len * 0.45), (c, top + body_len * 0.85)], fill=GLOW, width=1)
+    er = max(1, int(size / 28))
+    for i in range(eyes):
+        ex = c + (i - (eyes - 1) / 2) * (er * 2.8)
+        glow_eye(d, ex, top + body_len * 0.18, er)
+    save(im, UNITS, name)
+    cim, cd = new(size)
+    cd.ellipse([c - size * 0.05, top + body_len * 0.5, c + size * 0.05, top + body_len * 0.75], fill=(255, 255, 255, 255))
+    save(cim, UNITS, name + "-cell")
+
+
+def aliens():
+    walker_sprites("spawnling", 20, [(-3, 4, 4), (3, 5, 5)], 2)
+    walker_sprites("skitter", 28, [(-7, 5, 4), (-1, 6, 5), (7, 7, 6)], 2)
+    walker_sprites("stalker", 40, [(-11, 7, 5), (-3, 9, 6), (9, 11, 9)], 4, spikes=1)
+    walker_sprites("brute", 52, [(-15, 9, 7), (-4, 13, 8), (12, 16, 12)], 4, spikes=2)
+    flyer_sprite("wisp", 28, 12, 20, 2, tail=2)
+    flyer_sprite("shrike", 40, 18, 28, 2, tail=4)
+    flyer_sprite("harrower", 56, 26, 38, 4, tail=6)
+
+
 if __name__ == "__main__":
     items()
     ores()
     blocks()
     units()
+    aliens()
     print("sprites generated")

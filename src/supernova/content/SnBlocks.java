@@ -36,7 +36,7 @@ public final class SnBlocks {
     // Production
     public static Block ferriteDrill;
     // Crafting
-    public static Block ferrosteelSmelter, iceMelter, conductiumFabricator, singularityForge;
+    public static Block ferrosteelSmelter, iceMelter, conductiumFabricator;
     // Orbital
     public static Block orbitalUplink;
     // Logistics
@@ -98,18 +98,6 @@ public final class SnBlocks {
             outputItem = new ItemStack(conductium, 1);
         }};
 
-        singularityForge = new GenericCrafter("singularity-forge") {{
-            requirements(Category.crafting, with(ferrosteel, 150, conductium, 100, iridium, 80, novium, 30));
-            size = 3;
-            craftTime = 150f;
-            craftEffect = Fx.smeltsmoke;
-            hasLiquids = true;
-            consumeItems(with(ferrosteel, 2, conductium, 2, novium, 1));
-            consumeLiquid(volatiles, 6f / 60f);
-            consumePower(4f);
-            outputItem = new ItemStack(singularityComposite, 1);
-        }};
-
         // ---- Orbital ----
         orbitalUplink = new OrbitalUplink("orbital-uplink") {{
             requirements(Category.production, with(ferrite, 150, cobaltine, 80, ferrosteel, 120));
@@ -127,10 +115,6 @@ public final class SnBlocks {
             zone(new Zone("icy", Color.valueOf("a8e6f5"), 25f * 60f, false)
                 .yield(cryoIce, 8, 12)
                 .yield(quartzite, 2, 5));
-            zone(new Zone("deep", Color.valueOf("ff7a3d"), 60f * 60f, true)
-                .yield(novium, 1, 3)
-                .yield(iridium, 3, 6)
-                .yield(cryoIce, 2, 4));
         }};
     
 

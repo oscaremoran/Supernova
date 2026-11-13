@@ -18,6 +18,11 @@ public class Supernova extends Mod {
         // Sector info can be reloaded from disk; re-apply names (only fills in missing ones).
         Events.on(WorldLoadEvent.class, e -> {
             SectorNames.apply(SnPlanets.aphelion);
+            // Older Aphelion saves may still have vanilla units in their waves; swap in the Aliens.
+            if (!Vars.net.client() && Vars.state.rules.sector != null && Vars.state.rules.sector.planet == SnPlanets.aphelion
+                && SnAliens.hasVanillaUnits(Vars.state.rules.spawns)) {
+                SnAliens.convertWaves(Vars.state.rules.spawns);
+            }
             // Saves of the start sector made before the tutorial existed get it added (host/singleplayer only).
             if (!Vars.net.client() && Vars.state.isCampaign() && Vars.state.rules.sector != null
                 && Vars.state.rules.sector == SnPlanets.aphelion.getStartSector()
@@ -34,6 +39,7 @@ public class Supernova extends Mod {
         SnItems.load();
         SnLiquids.load();
         SnUnits.load();
+        SnAliens.load();
         SnBlocks.load();
         SnPlanets.load();
         SnTechTree.load();
