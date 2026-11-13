@@ -1,5 +1,6 @@
 package supernova.content;
 
+import arc.graphics.Color;
 import mindustry.content.Fx;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
@@ -8,6 +9,8 @@ import mindustry.world.Block;
 import mindustry.world.blocks.environment.OreBlock;
 import mindustry.world.blocks.production.Drill;
 import mindustry.world.blocks.production.GenericCrafter;
+import supernova.world.OrbitalUplink;
+import supernova.world.OrbitalUplink.Zone;
 
 import static mindustry.type.ItemStack.with;
 import static supernova.content.SnItems.*;
@@ -20,6 +23,8 @@ public final class SnBlocks {
     public static Block ferriteDrill;
     // Crafting
     public static Block ferrosteelSmelter, iceMelter, conductiumFabricator, singularityForge;
+    // Orbital
+    public static Block orbitalUplink;
 
     private SnBlocks() {}
 
@@ -78,6 +83,29 @@ public final class SnBlocks {
             consumeLiquid(volatiles, 6f / 60f);
             consumePower(4f);
             outputItem = new ItemStack(singularityComposite, 1);
+        }};
+
+        // ---- Orbital ----
+        orbitalUplink = new OrbitalUplink("orbital-uplink") {{
+            requirements(Category.production, with(ferrite, 150, cobaltine, 80, ferrosteel, 120));
+            size = 3;
+            consumePower(2f);
+            hasLiquids = true;
+            liquidCapacity = 30f;
+            propellant = volatiles;
+            consumeLiquid(volatiles, 4f / 60f).boost();
+
+            zone(new Zone("metallic", Color.valueOf("d8dde6"), 30f * 60f, false)
+                .yield(iridium, 6, 10)
+                .yield(ferrite, 4, 8)
+                .yield(cobaltine, 0, 4));
+            zone(new Zone("icy", Color.valueOf("a8e6f5"), 25f * 60f, false)
+                .yield(cryoIce, 8, 12)
+                .yield(quartzite, 2, 5));
+            zone(new Zone("deep", Color.valueOf("ff7a3d"), 60f * 60f, true)
+                .yield(novium, 1, 3)
+                .yield(iridium, 3, 6)
+                .yield(cryoIce, 2, 4));
         }};
     }
 }

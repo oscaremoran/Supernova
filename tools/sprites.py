@@ -292,12 +292,55 @@ def forge():
     save(im, BLOCKS, "singularity-forge")
 
 
+def uplink():
+    im, d, s = plate(3)
+    c = s // 2
+    # launch pad ring
+    d.ellipse([c - 38, c - 38, c + 38, c + 38], fill=FRAME_DARK)
+    d.ellipse([c - 35, c - 35, c + 35, c + 35], fill=hexc("34303a"))
+    # hazard chevrons around the pad
+    for k in range(8):
+        a = k * math.pi / 4 + math.pi / 8
+        x, y = c + math.cos(a) * 30, c + math.sin(a) * 30
+        d.ellipse([x - 3, y - 3, x + 3, y + 3], fill=hexc("e0b04a") if k % 2 == 0 else hexc("2a272e"))
+    # landing cradle
+    d.ellipse([c - 20, c - 20, c + 20, c + 20], fill=hexc("2a272e"))
+    d.ellipse([c - 18, c - 18, c + 18, c + 18], outline=hexc("6cc9e0"), width=2)
+    for a in (0, math.pi / 2, math.pi, 3 * math.pi / 2):
+        x1, y1 = c + math.cos(a) * 18, c + math.sin(a) * 18
+        x2, y2 = c + math.cos(a) * 26, c + math.sin(a) * 26
+        d.line([(x1, y1), (x2, y2)], fill=FRAME_LIGHT, width=3)
+    # side propellant tanks
+    for tx in (8, s - 20):
+        d.rectangle([tx, 8, tx + 11, 24], fill=OUTLINE)
+        d.rectangle([tx + 1, 9, tx + 10, 23], fill=hexc("6cc9e0"))
+        d.line([(tx + 2, 10), (tx + 2, 21)], fill=hexc("e6fbff"))
+    save(im, BLOCKS, "orbital-uplink")
+
+    # mining drone pod, drawn rising and landing over the pad
+    im, d = new(40)
+    o = OUTLINE
+    d.polygon([(20, 2), (29, 14), (29, 30), (11, 30), (11, 14)], fill=o)
+    d.polygon([(20, 4), (27, 15), (27, 29), (13, 29), (13, 15)], fill=hexc("b0a69e"))
+    d.polygon([(20, 4), (27, 15), (20, 15)], fill=hexc("d4ccc6"))
+    d.rectangle([13, 22, 27, 24], fill=hexc("e0b04a"))
+    d.ellipse([16, 9, 24, 17], fill=hexc("2b2f3a"), outline=o)
+    d.point([(18, 11)], fill=hexc("b8f0ff"))
+    # legs
+    d.polygon([(11, 24), (5, 36), (8, 37), (14, 28)], fill=o)
+    d.polygon([(29, 24), (35, 36), (32, 37), (26, 28)], fill=o)
+    d.rectangle([16, 30, 24, 34], fill=o)
+    d.rectangle([17, 31, 23, 33], fill=hexc("ff7a3d"))
+    save(im, BLOCKS, "orbital-uplink-pod")
+
+
 def blocks():
     drill()
     smelter()
     melter()
     fabricator()
     forge()
+    uplink()
 
 
 if __name__ == "__main__":

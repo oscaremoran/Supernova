@@ -48,7 +48,7 @@
 
 ### 5.1 Orbital mining stations
 
-- **Orbital Uplink** (2 tiers, TBD): a large block that consumes Volatiles and power to launch a **mining mission** into a chosen belt zone.
+- **Orbital Uplink** ✅ (3×3; a second tier is TBD): runs missions on power alone. Volatiles are an optional booster (2.5× speed) and are **required** for the Deep zone. This lets players start without propellant, while the belt's ice speeds up future missions.
 - A mission has a duration, a cargo capacity and a yield table per zone:
   - *Metallic*: iridium-heavy
   - *Icy*: cryo-ice-heavy
@@ -97,7 +97,7 @@
 |---|---|---|
 | M0 | Gradle skeleton, mod loads, Aliens team, 2 items | ✅ loads in game (build 160.7) |
 | M1 | Remaining 7 items + Volatiles, ores, drills, smelter and fabricator | 🟡 content + sprites in; tuning and in-game test pending |
-| M2 | Orbital Uplink and the mission system (multiplayer-safe) | |
+| M2 | Orbital Uplink and the mission system (multiplayer-safe) | 🟡 Orbital Uplink in (3 zones); in-game test pending |
 | M3 | Mining units T1–T3 | |
 | M4 | Planet Aphelion: generator, first 3 sectors, tech tree | |
 | M5 | Aliens unit tree and wave AI | |
