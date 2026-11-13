@@ -38,10 +38,15 @@ tasks.register('modJar', Jar) {
     from('assets')
 }
 
-// Copies the built jar into the game's mods folder for quick testing.
+// "Sync to Steam": copies the built jar into the Steam game's mods folder.
+// Steam Mindustry loads mods from inside the app bundle, NOT ~/Library/Application Support/Mindustry/mods.
+// Override with steamModsDir=... in local.properties.
+def steamModsDir = props.getProperty('steamModsDir',
+    "${System.getProperty('user.home')}/Library/Application Support/Steam/steamapps/common/Mindustry/Mindustry.app/Contents/Resources/saves/mods")
+
 tasks.register('deploy', Copy) {
     group = 'build'
     dependsOn 'modJar'
     from tasks.named('modJar')
-    into "${System.getProperty('user.home')}/Library/Application Support/Mindustry/mods"
+    into steamModsDir
 }
