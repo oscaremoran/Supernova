@@ -3,6 +3,8 @@ package supernova;
 import arc.Events;
 import arc.util.Log;
 import mindustry.Vars;
+import mindustry.type.Item;
+import mindustry.world.blocks.storage.CoreBlock.CoreBuild;
 import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.WorldLoadEvent;
 import mindustry.mod.Mod;
@@ -18,6 +20,14 @@ public class Supernova extends Mod {
         // Sector info can be reloaded from disk; re-apply names (only fills in missing ones).
         Events.on(WorldLoadEvent.class, e -> {
             SectorNames.apply(SnPlanets.aphelion);
+            // Remove non-Supernova items (e.g. the vanilla 100-copper loadout in older saves).
+            if (!Vars.net.client() && Vars.state.rules.sector != null && Vars.state.rules.sector.planet == SnPlanets.aphelion) {
+                for (CoreBuild core : Vars.state.rules.defaultTeam.cores()) {
+                    for (Item item : Vars.content.items()) {
+                        if (!item.name.startsWith("supernova-") && core.items.has(item)) core.items.set(item, 0);
+                    }
+                }
+            }
             // Older Aphelion saves may still have vanilla units in their waves; swap in the Aliens.
             if (!Vars.net.client() && Vars.state.rules.sector != null && Vars.state.rules.sector.planet == SnPlanets.aphelion
                 && SnAliens.hasVanillaUnits(Vars.state.rules.spawns)) {

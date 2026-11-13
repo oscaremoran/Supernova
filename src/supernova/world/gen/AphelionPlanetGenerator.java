@@ -6,6 +6,7 @@ import arc.util.Log;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.game.Team;
+import mindustry.type.ItemStack;
 import mindustry.maps.planet.SerpuloPlanetGenerator;
 import mindustry.world.Block;
 import mindustry.world.Tile;
@@ -95,6 +96,12 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
     @Override
     protected void generate() {
         Vars.state.rules.waveTeam = SnTeams.aliens;
+        // The game fills the core from rules.loadout on first landing (the vanilla default is 100 copper).
+        boolean start = sector != null && sector == sector.planet.getStartSector();
+        Vars.state.rules.loadout = start
+            // Landing Site: a lean start, like Ground Zero. The tutorial begins with mining by hand.
+            ? ItemStack.list(SnItems.ferrite, 80)
+            : ItemStack.list(SnItems.ferrite, 300, SnItems.cobaltine, 150, SnItems.quartzite, 100);
         super.generate();
         SnAliens.convertWaves(Vars.state.rules.spawns);
         convertTerrain();
@@ -137,17 +144,6 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
             if (tile.build instanceof CoreBlock.CoreBuild && tile.build.team == team && tile.block() != SnBlocks.coreOutpost && tile.isCenter()) {
                 Tile center = tile.build.tile;
                 center.setBlock(SnBlocks.coreOutpost, team);
-                if (center.build != null) {
-                    center.build.items.clear();
-                    if (sector != null && sector == sector.planet.getStartSector()) {
-                        // Landing Site: a lean start, like Ground Zero. The tutorial begins with mining by hand.
-                        center.build.items.add(SnItems.ferrite, 80);
-                    } else {
-                        center.build.items.add(SnItems.ferrite, 300);
-                        center.build.items.add(SnItems.cobaltine, 150);
-                        center.build.items.add(SnItems.quartzite, 100);
-                    }
-                }
                 return;
             }
         }

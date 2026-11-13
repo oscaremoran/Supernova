@@ -1,11 +1,16 @@
 package supernova.content;
 
+import mindustry.type.ItemStack;
+
 import static mindustry.content.TechTree.*;
 import static supernova.content.SnBlocks.*;
 import static supernova.content.SnItems.*;
 import static supernova.content.SnUnits.*;
 
 public final class SnTechTree {
+    /** Aphelion research costs as a fraction of the default (which is based on build cost). */
+    public static float researchCostScale = 0.3f;
+
     private SnTechTree() {}
 
     public static void load() {
@@ -62,6 +67,17 @@ public final class SnTechTree {
                     });
                 });
             });
+        });
+
+        // Cheaper research across the whole Aphelion tree.
+        SnPlanets.aphelion.techTree.each(node -> {
+            if (node.requirements == null) return;
+            ItemStack[] scaled = new ItemStack[node.requirements.length];
+            for (int i = 0; i < scaled.length; i++) {
+                ItemStack r = node.requirements[i];
+                scaled[i] = new ItemStack(r.item, Math.max(1, Math.round(r.amount * researchCostScale)));
+            }
+            node.requirements = scaled;
         });
     }
 }
