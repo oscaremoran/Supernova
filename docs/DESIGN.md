@@ -105,6 +105,7 @@
 
 ## 10. Known placeholders
 
-- Conveyor, junction, router, bridge and power node use **vanilla art** (`VanillaSkins`) until custom sprites are drawn.
+- The ferrite conveyor and bridge pieces keep the vanilla *layout* (required by the game's connection logic), repainted in Supernova colors by `tools/conveyor.py`.
 - Alien waves and enemy bases use **vanilla units and buildings** on the Aliens team until M5.
 - Sectors are procedural, from a re-skinned Serpulo generator. Hand-made story sectors are TBD.
+- Tutorial: an 8-step objectives chain on the Landing Site (`AphelionTutorial`).

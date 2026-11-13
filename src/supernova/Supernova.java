@@ -2,24 +2,29 @@ package supernova;
 
 import arc.Events;
 import arc.util.Log;
+import mindustry.Vars;
 import mindustry.game.EventType.ClientLoadEvent;
 import mindustry.game.EventType.WorldLoadEvent;
 import mindustry.mod.Mod;
 import supernova.content.*;
 import supernova.world.SectorNames;
-import supernova.world.VanillaSkins;
+import supernova.world.gen.AphelionTutorial;
 
 public class Supernova extends Mod {
 
     public Supernova() {
         Log.info("[Supernova] Constructed.");
-        // Placeholder blocks borrow vanilla sprites once all textures are loaded.
-        Events.on(ClientLoadEvent.class, e -> {
-            VanillaSkins.apply();
-            SectorNames.apply(SnPlanets.aphelion);
-        });
+        Events.on(ClientLoadEvent.class, e -> SectorNames.apply(SnPlanets.aphelion));
         // Sector info can be reloaded from disk; re-apply names (only fills in missing ones).
-        Events.on(WorldLoadEvent.class, e -> SectorNames.apply(SnPlanets.aphelion));
+        Events.on(WorldLoadEvent.class, e -> {
+            SectorNames.apply(SnPlanets.aphelion);
+            // Saves of the start sector made before the tutorial existed get it added (host/singleplayer only).
+            if (!Vars.net.client() && Vars.state.isCampaign() && Vars.state.rules.sector != null
+                && Vars.state.rules.sector == SnPlanets.aphelion.getStartSector()
+                && Vars.state.rules.objectives.all.isEmpty()) {
+                AphelionTutorial.apply(Vars.state.rules);
+            }
+        });
     }
 
     @Override

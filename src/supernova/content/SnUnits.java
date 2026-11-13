@@ -3,7 +3,9 @@ package supernova.content;
 import arc.struct.Seq;
 import mindustry.ai.types.BuilderAI;
 import mindustry.ai.types.MinerAI;
-import mindustry.entities.bullet.BasicBulletType;
+import arc.graphics.Color;
+import mindustry.entities.bullet.LaserBulletType;
+import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 import mindustry.type.Weapon;
@@ -37,8 +39,8 @@ public final class SnUnits {
             useUnitCap = false;
 
             health = 350f;
-            speed = 3f;
-            accel = 0.09f;
+            speed = 4.2f;
+            accel = 0.11f;
             drag = 0.05f;
             hitSize = 10f;
             rotateSpeed = 15f;
@@ -52,16 +54,18 @@ public final class SnUnits {
             itemCapacity = 40;
 
             weapons.add(new Weapon() {{
-                reload = 18f;
+                reload = 32f;
                 x = 0f;
-                y = 4f;
+                y = 5f;
                 mirror = false;
                 top = false;
-                bullet = new BasicBulletType(3f, 11f) {{
-                    width = 7f;
-                    height = 9f;
-                    lifetime = 55f;
+                shootSound = Sounds.shootLaser;
+                bullet = new LaserBulletType(20f) {{
+                    length = 88f;
+                    width = 9f;
+                    colors = new Color[]{Color.valueOf("5670b2").a(0.5f), Color.valueOf("8fb0f0"), Color.white};
                     buildingDamageMultiplier = 0.01f;
+                    hitColor = Color.valueOf("8fb0f0");
                 }};
             }});
         }};

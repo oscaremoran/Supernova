@@ -97,6 +97,9 @@ public class AphelionPlanetGenerator extends SerpuloPlanetGenerator {
         super.generate();
         convertTerrain();
         replaceStartingCore();
+        if (sector != null && sector == sector.planet.getStartSector()) {
+            AphelionTutorial.apply(Vars.state.rules);
+        }
     }
 
     private void convertTerrain() {

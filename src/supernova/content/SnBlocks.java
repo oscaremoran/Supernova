@@ -1,7 +1,6 @@
 package supernova.content;
 
 import arc.graphics.Color;
-import mindustry.content.Blocks;
 import mindustry.content.Fx;
 import mindustry.entities.bullet.BasicBulletType;
 import mindustry.type.Category;
@@ -26,7 +25,6 @@ import mindustry.world.blocks.production.GenericCrafter;
 import supernova.world.OrbitalUplink;
 import supernova.world.OrbitalUplink.Zone;
 
-import static supernova.world.VanillaSkins.skin;
 
 import static mindustry.type.ItemStack.with;
 import static supernova.content.SnItems.*;
@@ -136,34 +134,34 @@ public final class SnBlocks {
         }};
     
 
-        // ---- Logistics (vanilla art as placeholder) ----
-        ferriteConveyor = skin(new Conveyor("ferrite-conveyor") {{
+        // ---- Logistics ----
+        ferriteConveyor = new Conveyor("ferrite-conveyor") {{
             requirements(Category.distribution, with(ferrite, 1));
             alwaysUnlocked = true;
             health = 50;
             speed = 0.035f;
             displayedSpeed = 4.8f;
-        }}, Blocks.conveyor);
+        }};
 
-        ferriteJunction = skin(new Junction("ferrite-junction") {{
+        ferriteJunction = new Junction("ferrite-junction") {{
             requirements(Category.distribution, with(ferrite, 3));
             speed = 26;
             capacity = 6;
             health = 40;
-        }}, Blocks.junction);
+        }};
 
-        ferriteRouter = skin(new Router("ferrite-router") {{
+        ferriteRouter = new Router("ferrite-router") {{
             requirements(Category.distribution, with(ferrite, 3));
-        }}, Blocks.router);
+        }};
 
-        ferriteBridge = skin(new BufferedItemBridge("ferrite-bridge") {{
+        ferriteBridge = new BufferedItemBridge("ferrite-bridge") {{
             requirements(Category.distribution, with(ferrite, 6, cobaltine, 6));
             fadeIn = moveArrows = false;
             range = 4;
             speed = 74f;
             arrowSpacing = 6f;
             bufferCapacity = 14;
-        }}, Blocks.itemBridge);
+        }};
 
         // ---- Power ----
         solarArray = new SolarGenerator("solar-array") {{
@@ -182,11 +180,11 @@ public final class SnBlocks {
             generateEffect = Fx.generatespark;
         }};
 
-        ferritePowerNode = skin(new PowerNode("ferrite-power-node") {{
+        ferritePowerNode = new PowerNode("ferrite-power-node") {{
             requirements(Category.power, with(ferrite, 2, cobaltine, 4));
             maxNodes = 10;
             laserRange = 6f;
-        }}, Blocks.powerNode);
+        }};
 
         // ---- Defense ----
         int wallHealth = 85 * 4;

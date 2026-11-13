@@ -27,9 +27,69 @@ def shade(c, f):
     return tuple(max(0, min(255, int(v * f))) for v in c[:3]) + (c[3],)
 
 
+XFORM = None  # (scale, centre_x, centre_y) while drawing scaled item icons
+
+
+class ScaledDraw:
+    """Wraps ImageDraw, scaling all coordinates about a centre point onto a 32px canvas."""
+
+    def __init__(self, d, f, cx, cy):
+        self.d, self.f, self.cx, self.cy = d, f, cx, cy
+
+    def p(self, x, y):
+        return (16 + (x - self.cx) * self.f, 16 + (y - self.cy) * self.f)
+
+    def pts(self, pts):
+        return [self.p(x, y) for x, y in pts]
+
+    def box(self, b):
+        x0, y0 = self.p(b[0], b[1])
+        x1, y1 = self.p(b[2], b[3])
+        return [x0, y0, x1, y1]
+
+    def polygon(self, pts, **kw):
+        self.d.polygon(self.pts(pts), **kw)
+
+    def ellipse(self, b, **kw):
+        self.d.ellipse(self.box(b), **kw)
+
+    def rectangle(self, b, **kw):
+        self.d.rectangle(self.box(b), **kw)
+
+    def arc(self, b, start, end, width=1, **kw):
+        self.d.arc(self.box(b), start, end, width=max(1, round(width * self.f)), **kw)
+
+    def line(self, pts, width=1, **kw):
+        self.d.line(self.pts(pts), width=max(1, round(width * self.f)), **kw)
+
+    def point(self, pts, **kw):
+        for x, y in self.pts(pts):
+            self.d.rectangle([x, y, x + max(0, round(self.f) - 1), y + max(0, round(self.f) - 1)], **kw)
+
+
 def new(size):
     im = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    return im, ImageDraw.Draw(im)
+    d = ImageDraw.Draw(im)
+    if XFORM is not None:
+        d = ScaledDraw(d, *XFORM)
+    return im, d
+
+
+ITEM_FILL = 30  # vanilla item icons fill about 30 of 32 pixels
+
+
+def big_item(name, draw):
+    """Draws an item icon, then redraws it scaled up so it fills the icon like vanilla items."""
+    global XFORM
+    XFORM = None
+    draw()
+    bbox = Image.open(os.path.join(ITEMS, name + ".png")).getbbox()
+    if bbox:
+        w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        f = ITEM_FILL / max(w, h)
+        XFORM = (f, (bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2)
+        draw()
+    XFORM = None
 
 
 def save(im, folder, name):
@@ -134,28 +194,28 @@ def liquid_icon(name, base):
 
 
 def items():
-    item_chunks("ferrite", "8a7f78", [
+    big_item("ferrite", lambda: item_chunks("ferrite", "8a7f78", [
         [(5, 14), (13, 6), (21, 9), (22, 19), (14, 24), (6, 21)],
         [(16, 18), (23, 13), (28, 17), (27, 26), (19, 28)],
-    ])
-    item_chunks("cobaltine", "4f74c9", [
+    ]))
+    big_item("cobaltine", lambda: item_chunks("cobaltine", "4f74c9", [
         [(7, 26), (10, 8), (15, 4), (17, 22), (12, 28)],
         [(15, 27), (19, 10), (24, 6), (26, 20), (21, 28)],
-    ])
-    item_chunks("quartzite", "e3c9cf", [
+    ]))
+    big_item("quartzite", lambda: item_chunks("quartzite", "e3c9cf", [
         [(4, 25), (8, 12), (12, 9), (13, 26)],
         [(11, 28), (14, 6), (18, 3), (21, 27)],
         [(19, 27), (23, 14), (27, 12), (28, 26)],
-    ])
-    item_chunks("iridium", "d8dde6", [
+    ]))
+    big_item("iridium", lambda: item_chunks("iridium", "d8dde6", [
         [(6, 18), (10, 10), (19, 7), (25, 12), (26, 21), (18, 27), (9, 25)],
-    ], outline=hexc("4a4f5c"))
-    item_ingot("ferrosteel", "6f7682")
-    item_ingot("conductium", "e0b04a", stripe="4f74c9")
-    item_cube("cryo-ice", "a8e6f5")
-    item_gem("novium", "ff7a3d", "ffb36b")
-    item_singularity("singularity-composite")
-    liquid_icon("volatiles", "b8f0ff")
+    ], outline=hexc("4a4f5c")))
+    big_item("ferrosteel", lambda: item_ingot("ferrosteel", "6f7682"))
+    big_item("conductium", lambda: item_ingot("conductium", "e0b04a", stripe="4f74c9"))
+    big_item("cryo-ice", lambda: item_cube("cryo-ice", "a8e6f5"))
+    big_item("novium", lambda: item_gem("novium", "ff7a3d", "ffb36b"))
+    big_item("singularity-composite", lambda: item_singularity("singularity-composite"))
+    big_item("volatiles", lambda: liquid_icon("volatiles", "b8f0ff"))
 
 
 # ---------------------------------------------------------------- ores
@@ -495,6 +555,84 @@ def core_outpost():
     save(im, BLOCKS, "core-outpost-team")
 
 
+DIST = os.path.join(BLOCKS, "distribution")
+BELT = hexc("2c282e")
+COBALT = hexc("5670b2")
+COBALT_LIGHT = hexc("8fb0f0")
+
+
+def small_frame():
+    """32px ferrite housing used by the junction, router and bridge."""
+    im, d = new(32)
+    d.rectangle([0, 0, 31, 31], fill=OUTLINE)
+    d.rectangle([1, 1, 30, 30], fill=FRAME)
+    d.line([(1, 1), (30, 1)], fill=FRAME_LIGHT)
+    d.line([(1, 1), (1, 30)], fill=FRAME_LIGHT)
+    d.line([(1, 30), (30, 30)], fill=FRAME_DARK)
+    d.line([(30, 1), (30, 30)], fill=FRAME_DARK)
+    return im, d
+
+
+def junction():
+    im, d = small_frame()
+    # two crossing belt channels
+    d.rectangle([10, 1, 21, 30], fill=BELT)
+    d.rectangle([1, 10, 30, 21], fill=BELT)
+    # cobalt chevrons pointing through on each axis
+    for (x, y, dx, dy) in ((15.5, 4, 0, 1), (15.5, 27, 0, -1), (4, 15.5, 1, 0), (27, 15.5, -1, 0)):
+        if dx:
+            d.polygon([(x, y - 3), (x + 3 * dx, y), (x, y + 3)], fill=COBALT)
+        else:
+            d.polygon([(x - 3, y), (x, y + 3 * dy), (x + 3, y)], fill=COBALT)
+    # corner plates
+    for cx, cy in ((5, 5), (26, 5), (5, 26), (26, 26)):
+        d.rectangle([cx - 2, cy - 2, cx + 2, cy + 2], fill=FRAME_LIGHT, outline=FRAME_DARK)
+    d.rectangle([13, 13, 18, 18], fill=COBALT_LIGHT, outline=OUTLINE)
+    save(im, DIST, "ferrite-junction")
+
+
+def router():
+    im, d = small_frame()
+    d.rectangle([5, 5, 26, 26], fill=BELT)
+    # openings on all four sides
+    for b in ([12, 1, 19, 5], [12, 26, 19, 30], [1, 12, 5, 19], [26, 12, 30, 19]):
+        d.rectangle(b, fill=BELT)
+    d.ellipse([9, 9, 22, 22], fill=OUTLINE)
+    d.ellipse([10, 10, 21, 21], fill=COBALT)
+    d.ellipse([13, 13, 18, 18], fill=COBALT_LIGHT)
+    for a in range(4):
+        ang = a * math.pi / 2 + math.pi / 4
+        x, y = 15.5 + math.cos(ang) * 9, 15.5 + math.sin(ang) * 9
+        d.point([(x, y)], fill=FRAME_LIGHT)
+    save(im, DIST, "ferrite-router")
+
+
+def bridge_base():
+    im, d = small_frame()
+    d.ellipse([6, 6, 25, 25], fill=OUTLINE)
+    d.ellipse([7, 7, 24, 24], fill=BELT)
+    d.ellipse([11, 11, 20, 20], fill=COBALT)
+    d.ellipse([13, 13, 18, 18], fill=COBALT_LIGHT)
+    for cx, cy in ((4, 4), (27, 4), (4, 27), (27, 27)):
+        d.point([(cx, cy)], fill=FRAME_DARK)
+    save(im, DIST, "ferrite-bridge")
+
+
+def power_node():
+    im, d = new(32)
+    d.rectangle([3, 3, 28, 28], fill=OUTLINE)
+    d.rectangle([4, 4, 27, 27], fill=FRAME)
+    d.line([(4, 4), (27, 4)], fill=FRAME_LIGHT)
+    d.line([(4, 4), (4, 27)], fill=FRAME_LIGHT)
+    # cobaltine coil
+    d.ellipse([8, 8, 23, 23], fill=OUTLINE)
+    d.ellipse([9, 9, 22, 22], fill=COBALT)
+    d.ellipse([11, 11, 20, 20], fill=hexc("2b2f3a"))
+    d.ellipse([13, 13, 18, 18], fill=hexc("e0b04a"))
+    d.point([(14, 14)], fill=(255, 255, 255, 255))
+    save(im, BLOCKS, "ferrite-power-node")
+
+
 def blocks():
     drill()
     smelter()
@@ -502,6 +640,10 @@ def blocks():
     fabricator()
     forge()
     uplink()
+    junction()
+    router()
+    bridge_base()
+    power_node()
     wall("ferrite-wall", 1, "8a7f78", "b0a69e", "5e5550")
     wall("ferrite-wall-large", 2, "8a7f78", "b0a69e", "5e5550")
     wall("ferrosteel-wall", 1, "6f7682", "9aa2b0", "474c56")
