@@ -61,7 +61,7 @@ public final class SnAlienBlocks {
             size = 2;
             health = 1100;
             armor = 3f;
-            range = 165f;
+            range = 125f; // just inside Bolter range (130): players can siege it by building forward
             reload = 70f;
             rotateSpeed = 4f;
             shootCone = 10f;
@@ -70,7 +70,7 @@ public final class SnAlienBlocks {
                 sprite = "circle-bullet";
                 width = height = 13f;
                 shrinkY = 0f;
-                lifetime = 64f;
+                lifetime = 50f;
                 backColor = BUG_GLOW_DARK;
                 frontColor = BUG_GLOW;
                 hitColor = BUG_GLOW;

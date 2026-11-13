@@ -114,7 +114,7 @@ Black chitin, all legged walkers, in two unit trees. **Bugs** glow violet; **Pre
 |---|---|---|---|---|
 | Bugs (light) | **Hatchling** | T1 | 130 / 0 | Fast, rapid little acid spits (range 96). Weak but annoying. |
 | Bugs (light) | **Malign** | T2 | 480 / 3 | Lobs purple orbs (range ~125) that **split into a ring of 5 smaller orbs**. |
-| Predators (beatdown) | **Leacher** | T1 | 600 / 3 | Short-range bites with **lifesteal** (heals 60% of damage dealt). |
+| Predators (beatdown) | **Leacher** | T1 | 520 / 3 | Short-range bites with **lifesteal** (heals 30% of damage dealt). |
 | Predators (beatdown) | **Ripper** | T2 | 1,100 / 7 | **Vela-style sustained crimson beam** (range 120). Slows itself while firing. |
 
 Waves are generated from vanilla wave patterns, then converted: light, fast and air units become Bugs; heavy units become Predators.
@@ -140,22 +140,70 @@ Editor-only: players can't build them, but you can place them in maps. Procedura
 |---|---|---|
 | **Hive** | 3×3 | Hatches a Hatchling every 40 s, up to 3 alive nearby. |
 | **Spore Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
-| **Acid Spire** | 2×2 turret | Range 165; acid orbs burst into 6 smaller orbs. |
+| **Acid Spire** | 2×2 turret | Range 125 (just inside the Bolter's 130); acid orbs burst into 6 smaller orbs. |
 | **Chitin Wall** / Large | 1×1 / 2×2 | 440 / 1,760 HP, armor 2, **regrows 1% HP per second**. |
 | **Brood Core** | 4×4 | The Alien core: 5,000 HP. Destroy them all to win attack sectors. |
 
-## 5c. Balance notes (the Bolter benchmark)
+## 5c. Balance (tested in the simulator)
 
-The Bolter is the only early turret, so everything is tuned against it: 38 DPS with ferrite ammo (14 damage), 64 DPS with ferrosteel ammo (26 damage, pierces), range 130.
+`tools/balance-sim/BalanceSim.java` runs the **real game simulation headlessly** (no window): a flat arena, Bolters fed ammo continuously, and Aliens that walk straight at them. Rerun it after any stat change:
 
-| Matchup | Result |
-|---|---|
-| Bolter vs Hatchling | ~3.4 s per kill. Bolters out-range Hatchlings (130 vs 96), so they get free shots. |
-| Bolter vs Malign | Ferrite: ~16 s per kill (armor 3). **Ferrosteel ammo recommended.** |
-| Bolter vs Leacher | Ferrite: ~20 s per kill; ferrosteel ~10 s. Walls in front matter (its range is ~50). |
-| Bolter vs Ripper | Ferrite barely scratches it (armor 7). **Ferrosteel needed**: ~24 s per Bolter. |
-| Spore Pod vs Bolter | The Bolter wins on range (130 vs 110). |
-| Acid Spire vs Bolter | The Spire out-ranges it (165). Push it with units or your Pioneer. |
+```sh
+./gradlew modJar
+GAME="$HOME/Library/Application Support/Steam/steamapps/common/Mindustry/Mindustry.app/Contents/Resources/desktop.jar"
+javac -cp "$GAME:build/classes/java/main" -d build/sim tools/balance-sim/BalanceSim.java
+java  -cp "$GAME:build/classes/java/main:build/sim" BalanceSim
+```
+
+**Takeaways:**
+- **Hatchlings:** 2 ferrite Bolters beat 8 at once. With walls, the Bolters barely take damage.
+- **Malign:** needs 2 Bolters, or ferrosteel ammo.
+- **Leacher:** beats 1 ferrite Bolter; 2 Bolters, or 1 with ferrosteel ammo, win.
+- **Ripper:** ferrite ammo loses even with 2 Bolters; **ferrosteel is required**.
+- **Spore Pod** loses to 1 Bolter. **Acid Spire** beats 1 Bolter, loses to 2.
+- **Hive:** one Hatchling per 40 s, capped at 3. **Chitin Wall:** regrows 1%/s.
+
+**Latest results:**
+```
+=== Supernova balance sim (60 ticks = 1 s) ===
+
+1 Bolter(ferrite) vs 1 hatchling                 PLAYER WINS    9.8s  bolters left 1/1 (568 HP)  aliens left 0/1
+2 Bolter(ferrite) vs 1 hatchling                 PLAYER WINS    8.1s  bolters left 2/2 (1196 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 malign                    ALIENS WIN    23.3s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 malign                    PLAYER WINS   17.3s  bolters left 2/2 (856 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 leacher                   ALIENS WIN    23.8s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 leacher                   PLAYER WINS   19.6s  bolters left 2/2 (888 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 ripper                    ALIENS WIN    27.2s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 ripper                    ALIENS WIN    44.3s  bolters left 0/2 (0 HP)  aliens left 1/1
+
+1 Bolter(ferrosteel) vs 1 hatchling              PLAYER WINS    8.2s  bolters left 1/1 (588 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 hatchling              PLAYER WINS    7.4s  bolters left 2/2 (1200 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 malign                 PLAYER WINS   17.7s  bolters left 1/1 (242 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 malign                 PLAYER WINS   13.7s  bolters left 2/2 (1008 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 leacher                PLAYER WINS   19.9s  bolters left 1/1 (264 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 leacher                PLAYER WINS   13.9s  bolters left 2/2 (1200 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 ripper                 ALIENS WIN    26.9s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrosteel) vs 1 ripper                 PLAYER WINS   23.6s  bolters left 2/2 (705 HP)  aliens left 0/1
+
+2 Bolter(ferrite) vs 2 hatchling                 PLAYER WINS    9.9s  bolters left 2/2 (1164 HP)  aliens left 0/2
+2 Bolter(ferrite) vs 4 hatchling                 PLAYER WINS   13.6s  bolters left 2/2 (976 HP)  aliens left 0/4
+2 Bolter(ferrite) vs 6 hatchling                 PLAYER WINS   17.2s  bolters left 2/2 (708 HP)  aliens left 0/6
+2 Bolter(ferrite) vs 8 hatchling                 PLAYER WINS   21.0s  bolters left 2/2 (164 HP)  aliens left 0/8
+2 Bolter(ferrite)+walls vs 4 hatchling           PLAYER WINS   13.6s  bolters left 2/2 (1200 HP)  aliens left 0/4
+2 Bolter(ferrite)+walls vs 8 hatchling           PLAYER WINS   21.0s  bolters left 2/2 (1156 HP)  aliens left 0/8
+
+2 Bolter(ferrosteel)+walls vs 1 leacher          PLAYER WINS   14.3s  bolters left 2/2 (1200 HP)  aliens left 0/1
+2 Bolter(ferrosteel)+walls vs 2 leacher          PLAYER WINS   14.3s  bolters left 2/2 (1200 HP)  aliens left 0/2
+2 Bolter(ferrosteel)+walls vs 3 leacher          PLAYER WINS   19.5s  bolters left 2/2 (1152 HP)  aliens left 0/3
+3 Bolter(ferrosteel)+walls vs 1 ripper           PLAYER WINS   20.7s  bolters left 3/3 (1485 HP)  aliens left 0/1
+3 Bolter(ferrosteel)+walls vs 2 ripper           PLAYER WINS   21.0s  bolters left 3/3 (1251 HP)  aliens left 0/2
+
+Hive (idle Hatchlings stay put): 45s:1  85s:2  125s:3  180s:3  
+Chitin Wall regrowth: 220 -> 264 HP in 10 s (max 440)
+Spore Pod vs 1 Bolter(ferrite)                   PLAYER WINS   11.5s  bolters left 1/1   (alien range 110, bolter range 130)
+Acid Spire vs 1 Bolter(ferrite)                  ALIENS WIN    17.0s  bolters left 0/1   (alien range 125, bolter range 130)
+Acid Spire vs 2 Bolter(ferrite)                  PLAYER WINS   22.9s  bolters left 1/2   (alien range 125, bolter range 130)
+```
 
 ## 6. Tutorial## 6. Tutorial (Landing Site)
 

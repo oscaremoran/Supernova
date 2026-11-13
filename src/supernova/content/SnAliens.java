@@ -100,9 +100,9 @@ public final class SnAliens {
 
         // ================= Predators =================
 
-        // T1: tough brawler. Short-range bites heal it for 60% of the damage dealt.
+        // T1: tough brawler. Short-range bites heal it for 30% of the damage dealt.
         // Armor 3 so ferrite Bolter ammo (14) still does 11 per hit.
-        leacher = walker("leacher", 6, 600f, 0.5f, 16f, 3f);
+        leacher = walker("leacher", 6, 520f, 0.5f, 16f, 3f);
         leacher.weapons.add(new Weapon() {{
             reload = 24f;
             x = 4f;
@@ -113,7 +113,7 @@ public final class SnAliens {
                 width = 9f;
                 height = 10f;
                 lifetime = 17f;
-                lifesteal = 0.6f;
+                lifesteal = 0.3f;
                 backColor = PRED_GLOW_DARK;
                 frontColor = PRED_GLOW;
                 hitColor = PRED_GLOW;
