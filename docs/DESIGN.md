@@ -48,7 +48,7 @@
 
 ### 5.1 Orbital mining stations
 
-- **Orbital Uplink** ✅ (3×3; a second tier is TBD): runs missions on power alone, with Metallic and Icy zones. Volatiles are an optional booster (2.5× speed). The block also supports zones that *require* propellant, for a future Deep Belt.
+- **Orbital Mining Station** ✅ (3×3; a second tier is TBD): runs missions on power alone, with Metallic and Icy zones. Volatiles are an optional booster (2.5× speed). The block also supports zones that *require* propellant, for a future Deep Belt.
 - A mission has a duration, a cargo capacity and a yield table per zone:
   - *Metallic*: iridium-heavy
   - *Icy*: cryo-ice-heavy
@@ -79,7 +79,7 @@
 
 1. **Landing Site**: ferrite and cobaltine only. Teaches the basics.
 2. **Ice Fields**: quartzite and ferrosteel. First Alien waves.
-3. **Uplink Ridge**: unlocks the first Orbital Uplink and the icy belt zone.
+3. **Uplink Ridge**: unlocks the first Orbital Mining Station and the icy belt zone.
 4. Mid-game sectors: iridium, then conductium, then the first Alien base assault.
 5. Deep belt access: novium.
 6. Endgame: Singularity Composite, and the star's collapse.
@@ -98,7 +98,7 @@
 |---|---|---|
 | M0 | Gradle skeleton, mod loads, Aliens team, 2 items | ✅ loads in game (build 160.7) |
 | M1 | Remaining 7 items + Volatiles, ores, drills, smelter and fabricator | 🟡 content + sprites in; tuning and in-game test pending |
-| M2 | Orbital Uplink and the mission system (multiplayer-safe) | 🟡 Orbital Uplink in (3 zones); in-game test pending |
+| M2 | Orbital Mining Station and the mission system (multiplayer-safe) | 🟡 Orbital Mining Station in (3 zones); in-game test pending |
 | M3 | Mining units T1–T3 | 🟡 Pioneer, Prospector, Surveyor, Hauler + Drone Bay; in-game test pending |
 | M4 | Planet Aphelion: generator, first 3 sectors, tech tree | 🟡 planet + the Prime System star, procedural sectors, tech tree, survival kit; hand-made sectors TBD |
 | M5 | Aliens unit tree and wave AI | 🟡 Bugs + Predators (4 units) with sprites; waves converted; in-game test pending |

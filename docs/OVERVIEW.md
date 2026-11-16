@@ -31,12 +31,12 @@ Supernova content only appears on Aphelion, and vanilla Serpulo content doesn't 
 | 1 | **Cobaltine** | Surface ore (blue) | Turrets, power, electronics |
 | 1 | **Quartzite** | Surface ore (pale pink) | Solar, smelting flux |
 | 2 | **Ferrosteel** | Smelter: 2 ferrite + 1 quartzite | Advanced buildings, ammo, walls |
-| 2 | **Iridium** | **Orbital Uplink only** (Metallic Belt) | Conductium, Haulers |
-| 2 | **Cryo-Ice** | **Orbital Uplink only** (Icy Belt) | Melted into Volatiles |
+| 2 | **Iridium** | **Orbital Mining Station only** (Metallic Belt) | Conductium, Haulers |
+| 2 | **Cryo-Ice** | **Orbital Mining Station only** (Icy Belt) | Melted into Volatiles |
 | 3 | **Conductium** | Fabricator: 2 cobaltine + 1 iridium | The "silicon": advanced electronics |
 | Fluid | **Volatiles** | Ice Melter: cryo-ice | Uplink booster, Volatile Burner fuel |
 
-**The core loop:** surface ores → ferrosteel → **Orbital Uplink** → iridium and cryo-ice from space → conductium and volatiles. Volatiles then speed up the uplink, so the belt pays for itself.
+**The core loop:** surface ores → ferrosteel → **Orbital Mining Station** → iridium and cryo-ice from space → conductium and volatiles. Volatiles then speed up the uplink, so the belt pays for itself.
 
 ---
 
@@ -48,7 +48,7 @@ Power is shown in the game's units: 1.0 in code is 60 power/second in-game.
 | Block | Size | Cost | Notes |
 |---|---|---|---|
 | Ferrite Drill | 2×2 | 12 ferrite | Tier 2 (mines all three surface ores). Unlocked from the start. |
-| **Orbital Uplink** | 3×3 | 150 ferrite, 80 cobaltine, 120 ferrosteel | Uses 120 power/s. Click it to pick a zone. Volatiles make missions **2.5× faster**. A drone pod launches and lands. |
+| **Orbital Mining Station** | 3×3 | 150 ferrite, 80 cobaltine, 120 ferrosteel | Uses 120 power/s. Click it to pick a zone. Volatiles make missions **2.5× faster**. A drone pod launches and lands. |
 
 **Uplink zones:**
 | Zone | Mission time | Cargo per mission |
@@ -63,7 +63,7 @@ Switching zones aborts the current mission. If the uplink's storage is full, it 
 |---|---|---|---|---|
 | Ferrosteel Smelter | 2×2 | 2 ferrite + 1 quartzite → 1 ferrosteel | 0.8 s | 30/s |
 | Ice Melter | 2×2 | 1 cryo-ice → volatiles (12/s) | 0.7 s | 36/s |
-| Conductium Fabricator | 2×2 | 2 cobaltine + 1 iridium → 1 conductium | 1.2 s | 72/s |
+| Conductium Wirer | 2×2 | 2 cobaltine + 1 iridium → 1 conductium | 1.2 s | 72/s |
 
 ### Logistics
 | Block | Cost | Notes |
@@ -93,12 +93,12 @@ Switching zones aborts the current mission. If the uplink's storage is full, it 
 | **Pressure Drill** | 3×3 | 40 ferrite, 30 ferrosteel, 20 cobaltine | Tier 3, faster; 24 power/s; Volatiles boost it 1.6× |
 | **Igniter** | 1×1 turret | 30 ferrite, 20 ferrosteel, 15 cobaltine | Flamethrower burning Volatiles; range 100; pierces 3 and sets enemies on fire. The swarm counter. |
 | **Arc Coil** | 1×1 turret | 40 ferrosteel, 30 conductium, 50 cobaltine | Chain lightning (22 damage); range 110; 198 power/s, no ammo |
-| **Container** | 2×2 | 60 ferrite, 40 ferrosteel | Stores 300 of each item |
-| **Unloader** | 1×1 | 25 ferrosteel, 15 conductium | Pulls items out of containers, the core or crafters |
-| **Overflow / Underflow Gate** | 1×1 | 4 ferrite, 2 cobaltine | Standard gates |
-| **Battery** | 1×1 | 10 ferrite, 20 cobaltine | Stores 1,000 power |
-| **Large Power Node** | 2×2 | 10 ferrosteel, 15 cobaltine, 3 conductium | 15 links, range 15 |
-| **Mender** | 1×1 | 25 ferrite, 10 cobaltine | Heals 12% every ~3 s within 5 tiles; quartzite boosts it |
+| **Holding Station** | 2×2 | 60 ferrite, 40 ferrosteel | Stores 300 of each item |
+| **Retriever** | 1×1 | 25 ferrosteel, 15 conductium | Pulls items out of Holding Stations, the core or crafters |
+| **Overflow / Ferrite Underflow** | 1×1 | 4 ferrite, 2 cobaltine | Standard gates |
+| **Power Station** | 1×1 | 10 ferrite, 20 cobaltine | Stores 1,000 power |
+| **Large Ferrite Power Node** | 2×2 | 10 ferrosteel, 15 cobaltine, 3 conductium | 15 links, range 15 |
+| **Repairer** | 1×1 | 25 ferrite, 10 cobaltine | Heals 12% every ~3 s within 5 tiles; quartzite boosts it |
 | **Foundry** | 3×3 | 120 ferrite, 80 cobaltine, 60 ferrosteel | Builds Sentry (25 s), Warden (40 s), Bastion (60 s); 90 power/s |
 
 ### Units and core
@@ -261,7 +261,7 @@ Ground Zero style. Steps unlock one at a time, and labels appear on the map whil
 8. **Build 2 Solar Arrays**
 9. **Make ferrosteel**
 10. **Build a Drone Bay and 2 Prospectors**
-11. **Build an Orbital Uplink and get iridium**
+11. **Build an Orbital Mining Station and get iridium**
 
 ---
 
@@ -270,9 +270,9 @@ Ground Zero style. Steps unlock one at a time, and labels appear on the map whil
 ```
 Core: Outpost
 ├─ Ferrite Conveyor → Junction → Router → Bridge
-├─ Ferrite Drill → Power Node → Solar Array → Ferrosteel Smelter → Orbital Uplink
+├─ Ferrite Drill → Power Node → Solar Array → Ferrosteel Smelter → Orbital Mining Station
 │                                                                  ├─ Ice Melter → Volatile Burner
-│                                                                  └─ Conductium Fabricator
+│                                                                  └─ Conductium Wirer
 ├─ Bolter → Ferrite Wall → Large Ferrite Wall
 │                        └─ Ferrosteel Wall → Large Ferrosteel Wall
 ├─ Drone Bay → Prospector → Surveyor, Hauler
@@ -312,7 +312,7 @@ Each sector activates automatically once its map file is in `assets/maps/`. Unti
 | Path | What |
 |---|---|
 | `src/supernova/content/` | All content: items, liquids, blocks, units, Aliens, planets, tech tree, teams |
-| `src/supernova/world/` | Orbital Uplink, Hive, Chitin Wall, editor tweaks, sector names, planet generator, tutorial, Alien wave designs |
+| `src/supernova/world/` | Orbital Mining Station, Hive, Chitin Wall, editor tweaks, sector names, planet generator, tutorial, Alien wave designs |
 | `src/supernova/ai/HaulerAI.java` | Hauler behavior |
 | `assets/bundles/bundle.properties` | All in-game text |
 | `tools/sprites.py` | Generates every sprite |
