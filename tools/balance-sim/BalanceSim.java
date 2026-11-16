@@ -56,6 +56,43 @@ public class BalanceSim {
         structures();
         System.out.println();
         combat();
+        System.out.println();
+        infestation();
+    }
+
+    /** Hive spreading over time, and the Hatchling swarm dive. */
+    static void infestation() {
+        // Hive spread: one Hive in an empty arena; count Hives every 4 minutes for 13 minutes.
+        arena(120, 80);
+        Vars.world.tile(60, 40).setBlock(SnAlienBlocks.hive, SnTeams.aliens, 0);
+        StringBuilder sb = new StringBuilder("Hive spread (count over time): ");
+        int t = 0;
+        for (int minute : new int[]{1, 5, 9, 13}) {
+            for (; t < minute * 3600; t++) {
+                step();
+                Groups.unit.each(u -> u.controller(new IdleAI()));
+            }
+            int hives = Groups.build.count(b -> b.block == SnAlienBlocks.hive);
+            sb.append(minute).append("min:").append(hives).append("  ");
+        }
+        System.out.println(sb + "(cluster cap 3)");
+        Groups.clear();
+
+        // Swarm dive: a Hatchling with the real SwarmAI, a lone drill 10 tiles away in the open.
+        arena(60, 40);
+        Vars.world.tile(20, 20).setBlock(SnBlocks.ferriteDrill, player, 0);
+        Building drill = Vars.world.tile(20, 20).build;
+        Unit u = SnAliens.hatchling.spawn(SnTeams.aliens, 33 * 8f, 20 * 8f);
+        float startDst = u.dst(drill);
+        int tick = 0;
+        try {
+            for (; tick < 60 * 40 && drill.isValid(); tick++) step();
+            System.out.printf("Swarm dive: Hatchling started %.0f tiles from a lone drill; drill %s after %.1fs (closest approach %.0f tiles)%n",
+                startDst / 8f, drill.isValid() ? "SURVIVED" : "DESTROYED", tick / 60f, u.dst(drill) / 8f);
+        } catch (Throwable e) {
+            System.out.println("Swarm dive: couldn't simulate (" + e + ")");
+        }
+        Groups.clear();
     }
 
     /** Player gunships vs Aliens (both sides charge), and the new turrets vs Hatchling swarms. */

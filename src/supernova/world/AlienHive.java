@@ -5,7 +5,6 @@ import arc.math.Mathf;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
-import mindustry.content.Fx;
 import mindustry.entities.Units;
 import mindustry.gen.Building;
 import mindustry.type.UnitType;
@@ -24,6 +23,18 @@ public class AlienHive extends Block {
     /** Max living units of {@link #unitType} on this team within {@link #capRange}. */
     public int maxUnits = 3;
     public float capRange = 18f * 8f;
+
+    /** Ticks between attempts to bud a new Hive nearby (0 disables spreading). */
+    public float spreadTime = 4f * 60f * 60f;
+    /** New Hives appear this many tiles away (min to max). */
+    public int spreadMin = 9, spreadMax = 15;
+    /** No budding if this many Hives of the team are already within {@link #clusterRange} tiles. */
+    public int maxCluster = 3;
+    public int clusterRange = 30;
+    /** Map-wide cap on Hives per team. */
+    public int maxTotal = 12;
+    /** Never bud within this many tiles of an enemy building. */
+    public int keepAway = 12;
 
     public AlienHive(String name) {
         super(name);
@@ -46,6 +57,7 @@ public class AlienHive extends Block {
 
     public class HiveBuild extends Building {
         public float progress;
+        public float spread;
 
         @Override
         public void updateTile() {
@@ -57,9 +69,52 @@ public class AlienHive extends Block {
                     float angle = Mathf.random(360f);
                     float r = size * 4f + 6f;
                     unitType.spawn(team, x + Mathf.cosDeg(angle) * r, y + Mathf.sinDeg(angle) * r);
-                    Fx.spawn.at(x, y);
+                    supernova.content.SnFx.hiveHatch.at(x, y);
                 }
             }
+
+            if (spreadTime > 0f) {
+                spread += delta();
+                if (spread >= spreadTime) {
+                    spread = 0f;
+                    if (!Vars.net.client()) trySpread();
+                }
+            }
+        }
+
+        /** Buds a new Hive nearby if the cluster and map caps allow and there's clear ground. */
+        protected void trySpread() {
+            int total = 0, cluster = 0;
+            for (Building b : team.data().buildings) {
+                if (b.block != AlienHive.this) continue;
+                total++;
+                if (b.within(this, clusterRange * 8f)) cluster++;
+            }
+            if (total >= maxTotal || cluster >= maxCluster) return;
+
+            for (int attempt = 0; attempt < 16; attempt++) {
+                float angle = Mathf.random(360f);
+                int dist = Mathf.random(spreadMin, spreadMax);
+                int cx = tile.x + Math.round(Mathf.cosDeg(angle) * dist);
+                int cy = tile.y + Math.round(Mathf.sinDeg(angle) * dist);
+                if (canBud(cx, cy)) {
+                    mindustry.world.Tile t = Vars.world.tile(cx, cy);
+                    t.setNet(AlienHive.this, team, 0);
+                    supernova.content.SnFx.hiveHatch.at(t.worldx(), t.worldy());
+                    return;
+                }
+            }
+        }
+
+        protected boolean canBud(int cx, int cy) {
+            int offset = (size - 1) / 2;
+            for (int dx = 0; dx < size; dx++) {
+                for (int dy = 0; dy < size; dy++) {
+                    mindustry.world.Tile t = Vars.world.tile(cx - offset + dx, cy - offset + dy);
+                    if (t == null || t.block() != mindustry.content.Blocks.air || t.floor().isDeep() || t.floor().solid || t.overlay() == mindustry.content.Blocks.spawn) return false;
+                }
+            }
+            return Vars.indexer.findEnemyTile(team, cx * 8f, cy * 8f, keepAway * 8f, b -> true) == null;
         }
 
         @Override
@@ -75,19 +130,21 @@ public class AlienHive extends Block {
 
         @Override
         public byte version() {
-            return 1;
+            return 2;
         }
 
         @Override
         public void write(Writes write) {
             super.write(write);
             write.f(progress);
+            write.f(spread);
         }
 
         @Override
         public void read(Reads read, byte revision) {
             super.read(read, revision);
             if (revision >= 1) progress = read.f();
+            if (revision >= 2) spread = read.f();
         }
     }
 }

@@ -140,6 +140,12 @@ Black chitin, all legged walkers, in two unit trees. **Bugs** glow violet; **Pre
 
 Waves are generated from vanilla wave patterns, then converted: light, fast and air units become Bugs; heavy units become Predators.
 
+**Behaviour (the infestation):**
+- **Bugs swarm:** Hatchlings and Malign march toward your core, but break off to attack any exposed building within ~14 tiles that they have a clear line to. Unguarded drills and conveyors get eaten.
+- **Predators hunt the wounded:** Leachers and Rippers shoot the most damaged unit in range first.
+- **Hives spread:** left alone, a Hive buds a new Hive 9–15 tiles away every 4 minutes. It stops at 3 Hives per cluster and 12 per map, and never buds within 12 tiles of your buildings. Burn them out early.
+- **Juice:** Aliens burst into acid when they die (violet for Bugs, crimson for Predators); hits splash and muzzles puff acid; Hives pulse when they hatch or bud.
+
 ---|---|---|---|
 | **Spawnling** | Ground swarm | 140 | Bursts in acid when close (75 splash damage) |
 | **Skitter** | Ground T1 | 170 | Acid bolts |
@@ -159,7 +165,7 @@ Editor-only: players can't build them, but you can place them in maps. Procedura
 
 | Structure | Size | What it does |
 |---|---|---|
-| **Hive** | 3×3 | Hatches a Hatchling every 40 s, up to 3 alive nearby. |
+| **Hive** | 3×3 | Hatches a Hatchling every 40 s, up to 3 alive nearby. **Spreads** a new Hive every 4 minutes if left alone. |
 | **Acid Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
 | **Acid Spire** | 2×2 turret | Range 125 (just inside the Bolter's 130); acid orbs burst into 6 smaller orbs. |
 | **Chitin Wall** / Large | 1×1 / 2×2 | 440 / 1,760 HP, armor 2, **regrows 1% HP per second**. |

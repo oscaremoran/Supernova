@@ -147,6 +147,16 @@ public final class SnAliens {
             }};
         }});
 
+        // ---- Behaviour and juice ----
+        hatchling.controller = u -> new supernova.ai.SwarmAI();
+        malign.controller = u -> new supernova.ai.SwarmAI();
+        leacher.controller = u -> new supernova.ai.PredatorAI();
+        ripper.controller = u -> new supernova.ai.PredatorAI();
+        juice(hatchling, BUG_GLOW, BUG_GLOW_DARK, 5f);
+        juice(malign, BUG_GLOW, BUG_GLOW_DARK, 9f);
+        juice(leacher, PRED_GLOW, PRED_GLOW_DARK, 10f);
+        juice(ripper, PRED_GLOW, PRED_GLOW_DARK, 14f);
+
         // Wave conversion: light/fast/air vanilla units become Bugs, heavy ones become Predators.
         map(hatchling, "dagger", "crawler", "flare", "nova", "mono", "poly", "risso", "retusa");
         map(malign, "horizon", "zenith", "atrax", "mega", "antumbra", "eclipse", "quad", "oct", "oxynoe");
@@ -176,6 +186,19 @@ public final class SnAliens {
         t.shadowElevation = 0.2f;
         t.groundLayer = Layer.legUnit;
         return t;
+    }
+
+    /** Acid death burst, splash hits and muzzle puffs in the unit's glow colour. */
+    private static void juice(UnitType t, Color glow, Color dark, float size) {
+        t.deathExplosionEffect = SnFx.acidBurst(glow, dark, size);
+        t.deathSound = Sounds.plantBreak;
+        t.deathSoundVolume = 0.6f;
+        mindustry.entities.Effect hit = SnFx.acidHit(glow, dark), shoot = SnFx.acidShoot(glow);
+        for (Weapon w : t.weapons) {
+            w.bullet.shootEffect = shoot;
+            if (w.bullet.hitEffect == Fx.hitLaser) w.bullet.hitEffect = hit;
+            if (w.bullet.fragBullet != null && w.bullet.fragBullet.hitEffect == Fx.hitLaser) w.bullet.fragBullet.hitEffect = hit;
+        }
     }
 
     private static void map(UnitType alien, String... vanilla) {

@@ -33,6 +33,7 @@ public final class SnAlienBlocks {
             unitType = hatchling;
             spawnTime = 40f * 60f;
             maxUnits = 3;
+            spreadTime = 4f * 60f * 60f; // buds a new Hive every 4 minutes if left alone
         }};
 
         sporePod = new PowerTurret("spore-pod") {{
