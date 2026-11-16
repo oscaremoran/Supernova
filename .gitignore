@@ -5,3 +5,6 @@ out/
 *.iml
 .DS_Store
 local.properties
+
+# Generated showcase page (rebuild with: python3 tools/showcase/build.py)
+docs/showcase/
