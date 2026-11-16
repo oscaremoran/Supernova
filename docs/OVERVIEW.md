@@ -160,7 +160,7 @@ Editor-only: players can't build them, but you can place them in maps. Procedura
 | Structure | Size | What it does |
 |---|---|---|
 | **Hive** | 3×3 | Hatches a Hatchling every 40 s, up to 3 alive nearby. |
-| **Spore Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
+| **Acid Pod** | 1×1 turret | Acid spit, range 110 (Bolters out-range it). |
 | **Acid Spire** | 2×2 turret | Range 125 (just inside the Bolter's 130); acid orbs burst into 6 smaller orbs. |
 | **Chitin Wall** / Large | 1×1 / 2×2 | 440 / 1,760 HP, armor 2, **regrows 1% HP per second**. |
 | **Core: Brood** | 4×4 | The Alien core: 5,000 HP. Destroy them all to win attack sectors. |
@@ -181,7 +181,7 @@ java  -cp "$GAME:build/classes/java/main:build/sim" BalanceSim
 - **Malign:** needs 2 Bolters, or ferrosteel ammo.
 - **Leacher:** beats 1 ferrite Bolter; 2 Bolters, or 1 with ferrosteel ammo, win.
 - **Ripper:** ferrite ammo loses even with 2 Bolters; **ferrosteel is required**.
-- **Spore Pod** loses to 1 Bolter. **Acid Spire** beats 1 Bolter, loses to 2.
+- **Acid Pod** loses to 1 Bolter. **Acid Spire** beats 1 Bolter, loses to 2.
 - **Hive:** one Hatchling per 40 s, capped at 3. **Chitin Wall:** regrows 1%/s.
 - **Gunships:** Sentries beat Hatchlings but lose to Leachers; Wardens handle Leachers and Malign; 1 Bastion beats a Ripper, and 2 Bastions clear an Alien turret cluster with no losses.
 - **Igniter** is the swarm counter (1 beats 14 Hatchlings). **Arc Coil** beats 6, loses to 10.
@@ -223,7 +223,7 @@ java  -cp "$GAME:build/classes/java/main:build/sim" BalanceSim
 
 Hive (idle Hatchlings stay put): 45s:1  85s:2  125s:3  180s:3  
 Chitin Wall regrowth: 220 -> 264 HP in 10 s (max 440)
-Spore Pod vs 1 Bolter(ferrite)                   PLAYER WINS   11.5s  bolters left 1/1   (alien range 110, bolter range 130)
+Acid Pod vs 1 Bolter(ferrite)                   PLAYER WINS   11.5s  bolters left 1/1   (alien range 110, bolter range 130)
 Acid Spire vs 1 Bolter(ferrite)                  ALIENS WIN    17.0s  bolters left 0/1   (alien range 125, bolter range 130)
 Acid Spire vs 2 Bolter(ferrite)                  PLAYER WINS   22.9s  bolters left 1/2   (alien range 125, bolter range 130)
 
@@ -233,8 +233,8 @@ Acid Spire vs 2 Bolter(ferrite)                  PLAYER WINS   22.9s  bolters le
 2 Warden vs 2 malign                             PLAYER WINS   11.9s  mine left 2/2   aliens left 0/2
 1 Bastion vs 1 ripper                            PLAYER WINS   18.3s  mine left 1/1   aliens left 0/1
 2 Bastion vs 2 ripper                            PLAYER WINS   18.3s  mine left 2/2   aliens left 0/2
-2 Bastion vs Acid Spire + 2 Spore Pods           PLAYER WINS   18.0s  mine left 2/2   alien structures left 0/3
-4 Warden vs Acid Spire + 2 Spore Pods            PLAYER WINS   16.2s  mine left 4/4   alien structures left 0/3
+2 Bastion vs Acid Spire + 2 Acid Pods           PLAYER WINS   18.0s  mine left 2/2   alien structures left 0/3
+4 Warden vs Acid Spire + 2 Acid Pods            PLAYER WINS   16.2s  mine left 4/4   alien structures left 0/3
 
 1 Igniter (volatiles) vs 6 hatchling             PLAYER WINS    9.0s  turret HP 372   aliens left 0/6
 1 Igniter (volatiles) vs 10 hatchling            PLAYER WINS   10.2s  turret HP 236   aliens left 0/10

@@ -107,6 +107,6 @@
 ## 10. Known placeholders
 
 - The ferrite conveyor and bridge pieces keep the vanilla *layout* (required by the game's connection logic), repainted in Supernova colors by `tools/conveyor.py`.
-- Alien **enemy bases** use Alien structures (Hive, Spore Pod, Acid Spire, Chitin Wall, Core: Brood); procedural bases are converted.
+- Alien **enemy bases** use Alien structures (Hive, Acid Pod, Acid Spire, Chitin Wall, Core: Brood); procedural bases are converted.
 - Story sectors (Landing Site, Frost Ridge, Uplink Crater, Ice Shelf, The Hive) are wired up and activate when their maps exist in `assets/maps/`.
 - Tutorial: Ground Zero-style, 11 steps on the Landing Site with on-map markers (ore, core, Alien spawn) and a lean start (80 ferrite). `AphelionTutorial`, versioned via a rules tag.

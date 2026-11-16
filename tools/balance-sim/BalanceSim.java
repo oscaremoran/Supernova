@@ -66,8 +66,8 @@ public class BalanceSim {
         battle("2 Warden vs 2 malign", SnUnits.warden, 2, SnAliens.malign, 2);
         battle("1 Bastion vs 1 ripper", SnUnits.bastion, 1, SnAliens.ripper, 1);
         battle("2 Bastion vs 2 ripper", SnUnits.bastion, 2, SnAliens.ripper, 2);
-        siege("2 Bastion vs Acid Spire + 2 Spore Pods", SnUnits.bastion, 2);
-        siege("4 Warden vs Acid Spire + 2 Spore Pods", SnUnits.warden, 4);
+        siege("2 Bastion vs Acid Spire + 2 Acid Pods", SnUnits.bastion, 2);
+        siege("4 Warden vs Acid Spire + 2 Acid Pods", SnUnits.warden, 4);
         System.out.println();
         for (int n : new int[]{6, 10, 14}) turretVsSwarm("1 Igniter (volatiles) vs " + n + " hatchling", SnBlocks.igniter, n);
         for (int n : new int[]{6, 10, 14}) turretVsSwarm("1 Arc Coil (powered) vs " + n + " hatchling", SnBlocks.arcCoil, n);
@@ -167,7 +167,7 @@ public class BalanceSim {
         Groups.clear();
 
         // Turret duels at their own max range.
-        duel("Spore Pod vs 1 Bolter(ferrite)", SnAlienBlocks.sporePod, 1);
+        duel("Acid Pod vs 1 Bolter(ferrite)", SnAlienBlocks.sporePod, 1);
         duel("Acid Spire vs 1 Bolter(ferrite)", SnAlienBlocks.acidSpire, 1);
         duel("Acid Spire vs 2 Bolter(ferrite)", SnAlienBlocks.acidSpire, 2);
     }
