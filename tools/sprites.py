@@ -833,6 +833,153 @@ def alien_blocks():
     save(im, BLOCKS, "core-brood-team")
 
 
+
+# ---------------------------------------------------------------- early-game expansion
+
+def gunship(name, size, wing, body, accent, nose=True):
+    """Player gunship, nose up: hull, swept wings, coloured canopy and accent stripe."""
+    im, d = new(size)
+    c = size / 2
+    top, bot = c - body / 2, c + body / 2
+    hull = [(c, top), (c + size * 0.12, top + body * 0.35), (c + size * 0.1, bot), (c - size * 0.1, bot), (c - size * 0.12, top + body * 0.35)]
+    for sx in (-1, 1):
+        poly_shaded(d, [(c + sx * size * 0.08, top + body * 0.35), (c + sx * wing, top + body * 0.7),
+                        (c + sx * wing * 0.9, top + body * 0.85), (c + sx * size * 0.08, top + body * 0.8)], HULL_DARK)
+    poly_shaded(d, hull, HULL)
+    d.ellipse([c - size * 0.05, top + body * 0.2, c + size * 0.05, top + body * 0.38], fill=hexc("2b2f3a"))
+    d.point([(c - 1, top + body * 0.24)], fill=hexc("b8f0ff"))
+    d.line([(c - size * 0.08, top + body * 0.55), (c + size * 0.08, top + body * 0.55)], fill=hexc(accent), width=max(1, size // 24))
+    save(im, UNITS, name)
+    cim, cd = new(size)
+    cd.polygon([(c, top + body * 0.42), (c + size * 0.06, top + body * 0.6), (c - size * 0.06, top + body * 0.6)], fill=(255, 255, 255, 255))
+    save(cim, UNITS, name + "-cell")
+
+
+def turret_head(name, size, barrels, body_col, accent):
+    im, d = new(size)
+    c = size / 2
+    bw = max(2, size // 12)
+    for bx in barrels:
+        d.rectangle([c + bx - bw, 2, c + bx + bw, c], fill=OUTLINE)
+        d.rectangle([c + bx - bw + 1, 3, c + bx + bw - 1, c - 1], fill=hexc("6f7682"))
+    r = size * 0.32
+    poly_shaded(d, [(c, c - r), (c + r, c - r * 0.3), (c + r * 0.8, c + r), (c - r * 0.8, c + r), (c - r, c - r * 0.3)], hexc(body_col))
+    d.ellipse([c - r * 0.35, c - r * 0.1, c + r * 0.35, c + r * 0.6], fill=hexc(accent), outline=OUTLINE)
+    save(im, BLOCKS, name)
+
+
+def expansion():
+    gunship("sentry", 36, 14, 26, "5670b2")
+    gunship("warden", 48, 20, 36, "c9cfda")
+    gunship("bastion", 64, 28, 50, "e0b04a")
+
+    turret_head("igniter", 32, [0], "8a7f78", "ff7a3d")
+    # Arc Coil: a coil instead of barrels
+    im, d = new(32)
+    d.ellipse([6, 6, 26, 26], fill=OUTLINE)
+    d.ellipse([7, 7, 25, 25], fill=hexc("6f7682"))
+    for r in (8, 5):
+        d.ellipse([16 - r, 16 - r, 16 + r, 16 + r], outline=hexc("e0b04a"))
+    d.ellipse([13, 13, 19, 19], fill=hexc("8fb0f0"), outline=OUTLINE)
+    d.rectangle([15, 1, 17, 7], fill=hexc("e0b04a"))
+    save(im, BLOCKS, "arc-coil")
+
+    # Pressure Drill (3x3) + rotator + top
+    im, d, s = plate(3)
+    c = s // 2
+    d.ellipse([c - 34, c - 34, c + 34, c + 34], fill=FRAME_DARK)
+    d.ellipse([c - 31, c - 31, c + 31, c + 31], fill=hexc("2a272e"))
+    for tx, ty in ((8, 8), (s - 16, 8)):
+        d.rectangle([tx, ty, tx + 7, ty + 12], fill=OUTLINE)
+        d.rectangle([tx + 1, ty + 1, tx + 6, ty + 11], fill=hexc("6cc9e0"))
+    save(im, BLOCKS, "pressure-drill")
+    im, d = new(s)
+    for k in range(4):
+        a = k * math.pi / 2
+        pts = [(c + math.cos(a + da) * r, c + math.sin(a + da) * r) for da, r in ((-0.5, 7), (-0.22, 29), (0.08, 30), (0.5, 7))]
+        d.polygon(pts, fill=OUTLINE)
+        d.polygon([(c + (x - c) * 0.88, c + (y - c) * 0.88) for x, y in pts], fill=hexc("6f7682"))
+    d.ellipse([c - 9, c - 9, c + 9, c + 9], fill=hexc("9aa2b0"), outline=OUTLINE)
+    save(im, BLOCKS, "pressure-drill-rotator")
+    im, d = new(s)
+    d.ellipse([c - 5, c - 5, c + 5, c + 5], fill=FRAME_LIGHT, outline=OUTLINE)
+    save(im, BLOCKS, "pressure-drill-top")
+
+    # Container (2x2)
+    im, d, s = plate(2)
+    d.rectangle([10, 10, s - 11, s - 11], fill=FRAME_DARK)
+    for y in (18, 28, 38, 46):
+        d.line([(12, y), (s - 13, y)], fill=FRAME)
+    d.rectangle([28, 26, 36, 38], fill=hexc("e0b04a"), outline=OUTLINE)
+    save(im, BLOCKS, "container")
+
+    # Unloader (the game tints the vanilla "unloader-center" by item)
+    im, d = small_frame()
+    d.rectangle([6, 6, 25, 25], fill=BELT)
+    for x0, y0, dx, dy in ((15.5, 3, 0, -1), (15.5, 28, 0, 1), (3, 15.5, -1, 0), (28, 15.5, 1, 0)):
+        if dx:
+            d.polygon([(x0 + 3 * dx, y0), (x0, y0 - 3), (x0, y0 + 3)], fill=COBALT)
+        else:
+            d.polygon([(x0, y0 + 3 * dy), (x0 - 3, y0), (x0 + 3, y0)], fill=COBALT)
+    save(im, DIST, "unloader")
+
+    # Overflow / underflow gates
+    for name, col in (("overflow-gate", "e0b04a"), ("underflow-gate", "8fb0f0")):
+        im, d = small_frame()
+        d.rectangle([5, 5, 26, 26], fill=BELT)
+        d.polygon([(10, 10), (22, 16), (10, 22)], fill=hexc(col), outline=OUTLINE)
+        save(im, DIST, name)
+
+    # Battery + power fill + top
+    im, d = small_frame()
+    d.rectangle([7, 5, 24, 26], fill=FRAME_DARK)
+    save(im, BLOCKS, "battery")
+    im, d = new(32)
+    d.rectangle([9, 7, 22, 24], fill=(255, 255, 255, 255))
+    save(im, BLOCKS, "battery-power")
+    im, d = new(32)
+    d.rectangle([7, 5, 24, 26], outline=OUTLINE)
+    d.rectangle([13, 2, 18, 5], fill=hexc("e0b04a"), outline=OUTLINE)
+    save(im, BLOCKS, "battery-top")
+
+    # Large power node (2x2)
+    im, d, s = plate(2)
+    d.ellipse([12, 12, s - 13, s - 13], fill=OUTLINE)
+    d.ellipse([14, 14, s - 15, s - 15], fill=COBALT)
+    d.ellipse([20, 20, s - 21, s - 21], fill=hexc("2b2f3a"))
+    d.ellipse([26, 26, s - 27, s - 27], fill=hexc("e0b04a"))
+    save(im, BLOCKS, "large-power-node")
+
+    # Mender + top glow
+    im, d = small_frame()
+    d.rectangle([7, 7, 24, 24], fill=FRAME_DARK)
+    d.rectangle([13, 9, 18, 22], fill=hexc("84f491"))
+    d.rectangle([9, 13, 22, 18], fill=hexc("84f491"))
+    save(im, BLOCKS, "mender")
+    im, d = new(32)
+    d.rectangle([13, 9, 18, 22], fill=(255, 255, 255, 200))
+    d.rectangle([9, 13, 22, 18], fill=(255, 255, 255, 200))
+    save(im, BLOCKS, "mender-top")
+
+    # Foundry (3x3) + out + top: like the Drone Bay but armoured, red-gold stripes
+    im, d, s = plate(3)
+    d.rectangle([12, 12, s - 13, s - 13], fill=FRAME_DARK)
+    d.rectangle([14, 14, s - 15, s - 15], fill=hexc("2a272e"))
+    for k in range(4):
+        x = 18 + k * 16
+        for y0, y1 in ((14, 19), (s - 15, s - 20)):
+            d.polygon([(x, y0), (x + 8, y0), (x + 4, y1), (x - 4, y1)], fill=hexc("c94f3d"))
+    save(im, BLOCKS, "foundry")
+    im, d = new(s)
+    d.polygon([(s - 10, s // 2), (s - 20, s // 2 - 8), (s - 20, s // 2 + 8)], fill=hexc("c94f3d"), outline=OUTLINE)
+    save(im, BLOCKS, "foundry-out")
+    im, d = new(s)
+    for cx, cy in ((14, 14), (s - 15, 14), (14, s - 15), (s - 15, s - 15)):
+        d.rectangle([cx - 5, cy - 5, cx + 5, cy + 5], fill=OUTLINE)
+        d.rectangle([cx - 4, cy - 4, cx + 4, cy + 4], fill=hexc("e0b04a"))
+    save(im, BLOCKS, "foundry-top")
+
+
 if __name__ == "__main__":
     items()
     ores()
@@ -840,4 +987,5 @@ if __name__ == "__main__":
     units()
     aliens()
     alien_blocks()
+    expansion()
     print("sprites generated")

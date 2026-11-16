@@ -54,6 +54,87 @@ public class BalanceSim {
         for (int n : new int[]{1, 2}) run("3 Bolter(ferrosteel)+walls vs " + n + " ripper", 3, SnItems.ferrosteel, 1, SnAliens.ripper, n);
         System.out.println();
         structures();
+        System.out.println();
+        combat();
+    }
+
+    /** Player gunships vs Aliens (both sides charge), and the new turrets vs Hatchling swarms. */
+    static void combat() {
+        battle("2 Sentry vs 3 hatchling", SnUnits.sentry, 2, SnAliens.hatchling, 3);
+        battle("2 Sentry vs 1 leacher", SnUnits.sentry, 2, SnAliens.leacher, 1);
+        battle("2 Warden vs 1 leacher", SnUnits.warden, 2, SnAliens.leacher, 1);
+        battle("2 Warden vs 2 malign", SnUnits.warden, 2, SnAliens.malign, 2);
+        battle("1 Bastion vs 1 ripper", SnUnits.bastion, 1, SnAliens.ripper, 1);
+        battle("2 Bastion vs 2 ripper", SnUnits.bastion, 2, SnAliens.ripper, 2);
+        siege("2 Bastion vs Acid Spire + 2 Spore Pods", SnUnits.bastion, 2);
+        siege("4 Warden vs Acid Spire + 2 Spore Pods", SnUnits.warden, 4);
+        System.out.println();
+        for (int n : new int[]{6, 10, 14}) turretVsSwarm("1 Igniter (volatiles) vs " + n + " hatchling", SnBlocks.igniter, n);
+        for (int n : new int[]{6, 10, 14}) turretVsSwarm("1 Arc Coil (powered) vs " + n + " hatchling", SnBlocks.arcCoil, n);
+        for (int n : new int[]{6, 10, 14}) turretVsSwarm("1 Bolter (ferrite) vs " + n + " hatchling", SnBlocks.bolter, n);
+    }
+
+    static void battle(String label, UnitType mine, int mineCount, UnitType alien, int alienCount) {
+        arena(80, 40);
+        Seq<Unit> a = new Seq<>(), b = new Seq<>();
+        for (int i = 0; i < mineCount; i++) { Unit u = mine.spawn(player, 12 * 8f, (18 + i * 3) * 8f); u.controller(new ChargeAI()); a.add(u); }
+        for (int i = 0; i < alienCount; i++) { Unit u = alien.spawn(SnTeams.aliens, 66 * 8f, (18 + i * 3) * 8f); u.controller(new ChargeAI()); b.add(u); }
+        int tick = 0;
+        for (; tick < 60 * 120; tick++) {
+            step();
+            if (a.allMatch(u -> u.dead() || !u.isAdded()) || b.allMatch(u -> u.dead() || !u.isAdded())) break;
+        }
+        int la = a.count(u -> !u.dead() && u.isAdded()), lb = b.count(u -> !u.dead() && u.isAdded());
+        System.out.printf("%-48s %s  %5.1fs  mine left %d/%d   aliens left %d/%d%n", label,
+            lb == 0 ? "PLAYER WINS" : la == 0 ? "ALIENS WIN " : "TIMEOUT    ", tick / 60f, la, mineCount, lb, alienCount);
+        Groups.clear();
+    }
+
+    static void siege(String label, UnitType mine, int count) {
+        arena(80, 40);
+        Vars.world.tile(60, 20).setBlock(SnAlienBlocks.acidSpire, SnTeams.aliens, 0);
+        Vars.world.tile(58, 15).setBlock(SnAlienBlocks.sporePod, SnTeams.aliens, 0);
+        Vars.world.tile(58, 25).setBlock(SnAlienBlocks.sporePod, SnTeams.aliens, 0);
+        Seq<Unit> a = new Seq<>();
+        for (int i = 0; i < count; i++) { Unit u = mine.spawn(player, 12 * 8f, (16 + i * 3) * 8f); u.controller(new ChargeAI()); a.add(u); }
+        int tick = 0;
+        for (; tick < 60 * 150; tick++) {
+            step();
+            boolean baseDead = Groups.build.count(bb -> bb.team == SnTeams.aliens) == 0;
+            if (baseDead || a.allMatch(u -> u.dead() || !u.isAdded())) break;
+        }
+        int left = a.count(u -> !u.dead() && u.isAdded());
+        int structures = Groups.build.count(bb -> bb.team == SnTeams.aliens);
+        System.out.printf("%-48s %s  %5.1fs  mine left %d/%d   alien structures left %d/3%n", label,
+            structures == 0 ? "PLAYER WINS" : left == 0 ? "ALIENS WIN " : "TIMEOUT    ", tick / 60f, left, count, structures);
+        Groups.clear();
+    }
+
+    static void turretVsSwarm(String label, Block turret, int count) {
+        arena(80, 40);
+        Vars.state.rules.teams.get(player).cheat = true; // free power for powered turrets
+        Tile t = Vars.world.tile(10, 20);
+        t.setBlock(turret, player, 0);
+        Building b = t.build;
+        Seq<Unit> units = new Seq<>();
+        for (int i = 0; i < count; i++) {
+            Unit u = SnAliens.hatchling.spawn(SnTeams.aliens, (60 + (i % 3) * 2) * 8f, (17 + (i / 3) * 2 + (i % 3)) * 8f);
+            u.controller(new ChargeAI());
+            units.add(u);
+        }
+        int tick = 0;
+        for (; tick < 60 * 120; tick++) {
+            if (b.isValid()) {
+                if (b.block.hasLiquids && b.liquids != null) b.handleLiquid(b, SnLiquids.volatiles, b.block.liquidCapacity - b.liquids.get(SnLiquids.volatiles));
+                while (b.acceptItem(null, SnItems.ferrite)) b.handleItem(null, SnItems.ferrite);
+            }
+            step();
+            if (!b.isValid() || units.allMatch(u -> u.dead() || !u.isAdded())) break;
+        }
+        int alive = units.count(u -> !u.dead() && u.isAdded());
+        System.out.printf("%-48s %s  %5.1fs  turret HP %.0f   aliens left %d/%d%n", label,
+            alive == 0 ? "PLAYER WINS" : !b.isValid() ? "ALIENS WIN " : "TIMEOUT    ", tick / 60f, b.isValid() ? b.health : 0f, alive, count);
+        Groups.clear();
     }
 
     /** Alien structures: Hive spawn rate and cap, Chitin Wall regrowth, turrets vs Bolters. */
@@ -123,6 +204,8 @@ public class BalanceSim {
         for (int x = 0; x < w; x++) for (int y = 0; y < h; y++) tiles.set(x, y, new Tile(x, y, Blocks.stone, Blocks.air, Blocks.air));
         Vars.state.rules = new mindustry.game.Rules();
         Vars.state.rules.waveTeam = SnTeams.aliens;
+        Vars.state.rules.unitCapVariable = false; // no cores in the arena: don't let the unit cap delete units
+        Vars.state.rules.unitCap = 999;
         Vars.world.endMapLoad();
         Groups.resize(-64f, -64f, w * 8f + 128f, h * 8f + 128f);
         Vars.state.set(GameState.State.playing);
@@ -164,7 +247,14 @@ public class BalanceSim {
         Vars.tree = new FileTree();
         Vars.init();
         Vars.content.createBaseContent();
-        new Supernova().loadContent();
+        // Register as a mod so content gets the "supernova-" prefix, exactly as in the game.
+        mindustry.mod.Mods.ModMeta meta = new mindustry.mod.Mods.ModMeta();
+        meta.name = "supernova";
+        Supernova main = new Supernova();
+        mindustry.mod.Mods.LoadedMod mod = new mindustry.mod.Mods.LoadedMod(new arc.files.Fi("."), new arc.files.Fi("."), main, BalanceSim.class.getClassLoader(), meta);
+        Vars.content.setCurrentMod(mod);
+        main.loadContent();
+        Vars.content.setCurrentMod(null);
         Vars.content.init();
         Vars.logic = new Logic();
         Vars.world = new World();
@@ -245,12 +335,17 @@ public class BalanceSim {
         @Override
         public void updateMovement() {
             calls++;
-            Building target = null;
+            mindustry.gen.Teamc target = null;
             float best = Float.MAX_VALUE;
             for (Building b : Groups.build) {
                 if (b.team == unit.team) continue;
                 float d = b.dst2(unit);
                 if (d < best) { best = d; target = b; }
+            }
+            for (Unit u : Groups.unit) {
+                if (u.team == unit.team || u.dead()) continue;
+                float d = u.dst2(unit);
+                if (d < best) { best = d; target = u; }
             }
             if (target != null) {
                 moveTo(target, unit.type.range * 0.7f);

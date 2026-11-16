@@ -22,14 +22,19 @@ public final class SnTechTree {
                 node(ferriteJunction, () -> {
                     node(ferriteRouter, () -> {
                         node(ferriteBridge);
+                        node(overflowGate, () -> node(underflowGate));
+                        node(container, () -> node(unloader));
                     });
                 });
             });
 
             node(ferriteDrill, () -> {
                 node(ferritePowerNode, () -> {
+                    node(battery, () -> node(largePowerNode));
+                    node(mender);
                     node(solarArray, () -> {
                         node(ferrosteelSmelter, () -> {
+                            node(pressureDrill);
                             node(orbitalUplink, () -> {
                                 node(iceMelter, () -> {
                                     node(volatileBurner);
@@ -42,11 +47,18 @@ public final class SnTechTree {
             });
 
             node(bolter, () -> {
+                node(igniter, () -> node(arcCoil));
                 node(ferriteWall, () -> {
                     node(ferriteWallLarge);
                     node(ferrosteelWall, () -> {
                         node(ferrosteelWallLarge);
                     });
+                });
+            });
+
+            node(foundry, () -> {
+                node(sentry, () -> {
+                    node(warden, () -> node(bastion));
                 });
             });
 

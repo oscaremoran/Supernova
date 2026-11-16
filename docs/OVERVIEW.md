@@ -1,6 +1,6 @@
 # Supernova: Where We Are
 
-*Snapshot: 2026-11-13. Mindustry V8, build 160.7. Java mod, about 1,600 lines across 17 commits.*
+*Snapshot: 2026-11-15. Mindustry V8, build 160.7. Java mod, about 1,600 lines across 17 commits.*
 
 Supernova adds a new star system, the **Prime System**, and a new campaign planet, **Aphelion**. Aphelion is a cold, rocky world whose real wealth is in the asteroid belt overhead. You build an economy that reaches into orbit while fighting off the **Aliens**.
 
@@ -87,6 +87,20 @@ Switching zones aborts the current mission. If the uplink's storage is full, it 
 | Ferrite Wall / Large | 340 / 1,360 HP |
 | Ferrosteel Wall / Large | 560 / 2,240 HP, 3 armor |
 
+### Expansion blocks
+| Block | Size | Cost | Notes |
+|---|---|---|---|
+| **Pressure Drill** | 3×3 | 40 ferrite, 30 ferrosteel, 20 cobaltine | Tier 3, faster; 24 power/s; Volatiles boost it 1.6× |
+| **Igniter** | 1×1 turret | 30 ferrite, 20 ferrosteel, 15 cobaltine | Flamethrower burning Volatiles; range 100; pierces 3 and sets enemies on fire. The swarm counter. |
+| **Arc Coil** | 1×1 turret | 40 ferrosteel, 30 conductium, 50 cobaltine | Chain lightning (22 damage); range 110; 198 power/s, no ammo |
+| **Container** | 2×2 | 60 ferrite, 40 ferrosteel | Stores 300 of each item |
+| **Unloader** | 1×1 | 25 ferrosteel, 15 conductium | Pulls items out of containers, the core or crafters |
+| **Overflow / Underflow Gate** | 1×1 | 4 ferrite, 2 cobaltine | Standard gates |
+| **Battery** | 1×1 | 10 ferrite, 20 cobaltine | Stores 1,000 power |
+| **Large Power Node** | 2×2 | 10 ferrosteel, 15 cobaltine, 3 conductium | 15 links, range 15 |
+| **Mender** | 1×1 | 25 ferrite, 10 cobaltine | Heals 12% every ~3 s within 5 tiles; quartzite boosts it |
+| **Foundry** | 3×3 | 120 ferrite, 80 cobaltine, 60 ferrosteel | Builds Sentry (25 s), Warden (40 s), Bastion (60 s); 90 power/s |
+
 ### Units and core
 | Block | Notes |
 |---|---|
@@ -103,6 +117,13 @@ Switching zones aborts the current mission. If the uplink's storage is full, it 
 | **Prospector** | Mining drone, runs on its own | Mines ferrite, cobaltine and quartzite and delivers them to the core. Carries 20. |
 | **Surveyor** | Better mining drone | Faster mining, carries 40, armored. |
 | **Hauler** | Cargo drone | Flies uplink cargo to the core. Carries 60. |
+
+**Combat gunships** (built in the Foundry):
+| Unit | Tier | HP / Armor | Weapon | Cost |
+|---|---|---|---|---|
+| **Sentry** | T1 | 200 / 1 | Twin cobalt bolts | 20 ferrite, 15 cobaltine |
+| **Warden** | T2 | 560 / 4 | Heavy ferrosteel slugs with splash | 30 ferrosteel, 30 cobaltine |
+| **Bastion** | T3 | 1,150 / 7 | Conductium beam (70 damage) + bolts | 50 ferrosteel, 30 conductium |
 
 ---
 
@@ -162,47 +183,68 @@ java  -cp "$GAME:build/classes/java/main:build/sim" BalanceSim
 - **Ripper:** ferrite ammo loses even with 2 Bolters; **ferrosteel is required**.
 - **Spore Pod** loses to 1 Bolter. **Acid Spire** beats 1 Bolter, loses to 2.
 - **Hive:** one Hatchling per 40 s, capped at 3. **Chitin Wall:** regrows 1%/s.
+- **Gunships:** Sentries beat Hatchlings but lose to Leachers; Wardens handle Leachers and Malign; 1 Bastion beats a Ripper, and 2 Bastions clear an Alien turret cluster with no losses.
+- **Igniter** is the swarm counter (1 beats 14 Hatchlings). **Arc Coil** beats 6, loses to 10.
 
 **Latest results:**
 ```
 === Supernova balance sim (60 ticks = 1 s) ===
 
-1 Bolter(ferrite) vs 1 hatchling                 PLAYER WINS    9.8s  bolters left 1/1 (568 HP)  aliens left 0/1
-2 Bolter(ferrite) vs 1 hatchling                 PLAYER WINS    8.1s  bolters left 2/2 (1196 HP)  aliens left 0/1
-1 Bolter(ferrite) vs 1 malign                    ALIENS WIN    23.3s  bolters left 0/1 (0 HP)  aliens left 1/1
-2 Bolter(ferrite) vs 1 malign                    PLAYER WINS   17.3s  bolters left 2/2 (856 HP)  aliens left 0/1
-1 Bolter(ferrite) vs 1 leacher                   ALIENS WIN    23.8s  bolters left 0/1 (0 HP)  aliens left 1/1
-2 Bolter(ferrite) vs 1 leacher                   PLAYER WINS   19.6s  bolters left 2/2 (888 HP)  aliens left 0/1
-1 Bolter(ferrite) vs 1 ripper                    ALIENS WIN    27.2s  bolters left 0/1 (0 HP)  aliens left 1/1
-2 Bolter(ferrite) vs 1 ripper                    ALIENS WIN    44.3s  bolters left 0/2 (0 HP)  aliens left 1/1
+1 Bolter(ferrite) vs 1 hatchling       PLAYER WINS    9.8s  bolters left 1/1 (568 HP)  aliens left 0/1
+2 Bolter(ferrite) vs 1 hatchling       PLAYER WINS    8.1s  bolters left 2/2 (1192 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 malign          ALIENS WIN    24.4s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 malign          PLAYER WINS   17.3s  bolters left 2/2 (874 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 leacher         ALIENS WIN    24.1s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 leacher         PLAYER WINS   19.6s  bolters left 2/2 (888 HP)  aliens left 0/1
+1 Bolter(ferrite) vs 1 ripper          ALIENS WIN    27.1s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrite) vs 1 ripper          ALIENS WIN    44.1s  bolters left 0/2 (0 HP)  aliens left 1/1
 
-1 Bolter(ferrosteel) vs 1 hatchling              PLAYER WINS    8.2s  bolters left 1/1 (588 HP)  aliens left 0/1
-2 Bolter(ferrosteel) vs 1 hatchling              PLAYER WINS    7.4s  bolters left 2/2 (1200 HP)  aliens left 0/1
-1 Bolter(ferrosteel) vs 1 malign                 PLAYER WINS   17.7s  bolters left 1/1 (242 HP)  aliens left 0/1
-2 Bolter(ferrosteel) vs 1 malign                 PLAYER WINS   13.7s  bolters left 2/2 (1008 HP)  aliens left 0/1
-1 Bolter(ferrosteel) vs 1 leacher                PLAYER WINS   19.9s  bolters left 1/1 (264 HP)  aliens left 0/1
-2 Bolter(ferrosteel) vs 1 leacher                PLAYER WINS   13.9s  bolters left 2/2 (1200 HP)  aliens left 0/1
-1 Bolter(ferrosteel) vs 1 ripper                 ALIENS WIN    26.9s  bolters left 0/1 (0 HP)  aliens left 1/1
-2 Bolter(ferrosteel) vs 1 ripper                 PLAYER WINS   23.6s  bolters left 2/2 (705 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 hatchling    PLAYER WINS    8.2s  bolters left 1/1 (592 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 hatchling    PLAYER WINS    7.4s  bolters left 2/2 (1200 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 malign       PLAYER WINS   17.7s  bolters left 1/1 (256 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 malign       PLAYER WINS   13.7s  bolters left 2/2 (1002 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 leacher      PLAYER WINS   19.9s  bolters left 1/1 (264 HP)  aliens left 0/1
+2 Bolter(ferrosteel) vs 1 leacher      PLAYER WINS   13.9s  bolters left 2/2 (1200 HP)  aliens left 0/1
+1 Bolter(ferrosteel) vs 1 ripper       ALIENS WIN    27.0s  bolters left 0/1 (0 HP)  aliens left 1/1
+2 Bolter(ferrosteel) vs 1 ripper       PLAYER WINS   23.6s  bolters left 2/2 (705 HP)  aliens left 0/1
 
-2 Bolter(ferrite) vs 2 hatchling                 PLAYER WINS    9.9s  bolters left 2/2 (1164 HP)  aliens left 0/2
-2 Bolter(ferrite) vs 4 hatchling                 PLAYER WINS   13.6s  bolters left 2/2 (976 HP)  aliens left 0/4
-2 Bolter(ferrite) vs 6 hatchling                 PLAYER WINS   17.2s  bolters left 2/2 (708 HP)  aliens left 0/6
-2 Bolter(ferrite) vs 8 hatchling                 PLAYER WINS   21.0s  bolters left 2/2 (164 HP)  aliens left 0/8
-2 Bolter(ferrite)+walls vs 4 hatchling           PLAYER WINS   13.6s  bolters left 2/2 (1200 HP)  aliens left 0/4
-2 Bolter(ferrite)+walls vs 8 hatchling           PLAYER WINS   21.0s  bolters left 2/2 (1156 HP)  aliens left 0/8
+2 Bolter(ferrite) vs 2 hatchling                 PLAYER WINS    9.9s  bolters left 2/2 (1160 HP)  aliens left 0/2
+2 Bolter(ferrite) vs 4 hatchling                 PLAYER WINS   13.6s  bolters left 2/2 (992 HP)  aliens left 0/4
+2 Bolter(ferrite) vs 6 hatchling                 PLAYER WINS   16.9s  bolters left 2/2 (688 HP)  aliens left 0/6
+2 Bolter(ferrite) vs 8 hatchling                 PLAYER WINS   21.0s  bolters left 2/2 (196 HP)  aliens left 0/8
+2 Bolter(ferrite)+walls vs 4 hatchling           PLAYER WINS   13.5s  bolters left 2/2 (1200 HP)  aliens left 0/4
+2 Bolter(ferrite)+walls vs 8 hatchling           PLAYER WINS   21.0s  bolters left 2/2 (1176 HP)  aliens left 0/8
 
 2 Bolter(ferrosteel)+walls vs 1 leacher          PLAYER WINS   14.3s  bolters left 2/2 (1200 HP)  aliens left 0/1
 2 Bolter(ferrosteel)+walls vs 2 leacher          PLAYER WINS   14.3s  bolters left 2/2 (1200 HP)  aliens left 0/2
-2 Bolter(ferrosteel)+walls vs 3 leacher          PLAYER WINS   19.5s  bolters left 2/2 (1152 HP)  aliens left 0/3
+2 Bolter(ferrosteel)+walls vs 3 leacher          PLAYER WINS   19.5s  bolters left 2/2 (1128 HP)  aliens left 0/3
 3 Bolter(ferrosteel)+walls vs 1 ripper           PLAYER WINS   20.7s  bolters left 3/3 (1485 HP)  aliens left 0/1
-3 Bolter(ferrosteel)+walls vs 2 ripper           PLAYER WINS   21.0s  bolters left 3/3 (1251 HP)  aliens left 0/2
+3 Bolter(ferrosteel)+walls vs 2 ripper           PLAYER WINS   20.6s  bolters left 3/3 (1323 HP)  aliens left 0/2
 
 Hive (idle Hatchlings stay put): 45s:1  85s:2  125s:3  180s:3  
 Chitin Wall regrowth: 220 -> 264 HP in 10 s (max 440)
 Spore Pod vs 1 Bolter(ferrite)                   PLAYER WINS   11.5s  bolters left 1/1   (alien range 110, bolter range 130)
 Acid Spire vs 1 Bolter(ferrite)                  ALIENS WIN    17.0s  bolters left 0/1   (alien range 125, bolter range 130)
 Acid Spire vs 2 Bolter(ferrite)                  PLAYER WINS   22.9s  bolters left 1/2   (alien range 125, bolter range 130)
+
+2 Sentry vs 3 hatchling                          PLAYER WINS    9.6s  mine left 2/2   aliens left 0/3
+2 Sentry vs 1 leacher                            ALIENS WIN    16.6s  mine left 0/2   aliens left 1/1
+2 Warden vs 1 leacher                            PLAYER WINS    7.7s  mine left 2/2   aliens left 0/1
+2 Warden vs 2 malign                             PLAYER WINS   11.9s  mine left 2/2   aliens left 0/2
+1 Bastion vs 1 ripper                            PLAYER WINS   18.3s  mine left 1/1   aliens left 0/1
+2 Bastion vs 2 ripper                            PLAYER WINS   18.3s  mine left 2/2   aliens left 0/2
+2 Bastion vs Acid Spire + 2 Spore Pods           PLAYER WINS   18.0s  mine left 2/2   alien structures left 0/3
+4 Warden vs Acid Spire + 2 Spore Pods            PLAYER WINS   16.2s  mine left 4/4   alien structures left 0/3
+
+1 Igniter (volatiles) vs 6 hatchling             PLAYER WINS    9.0s  turret HP 372   aliens left 0/6
+1 Igniter (volatiles) vs 10 hatchling            PLAYER WINS   10.2s  turret HP 236   aliens left 0/10
+1 Igniter (volatiles) vs 14 hatchling            PLAYER WINS   11.1s  turret HP 88   aliens left 0/14
+1 Arc Coil (powered) vs 6 hatchling              PLAYER WINS   16.4s  turret HP 188   aliens left 0/6
+1 Arc Coil (powered) vs 10 hatchling             ALIENS WIN    12.9s  turret HP 0   aliens left 4/10
+1 Arc Coil (powered) vs 14 hatchling             ALIENS WIN    11.2s  turret HP 0   aliens left 8/14
+1 Bolter (ferrite) vs 6 hatchling                ALIENS WIN    15.3s  turret HP 0   aliens left 5/6
+1 Bolter (ferrite) vs 10 hatchling               ALIENS WIN    12.1s  turret HP 0   aliens left 9/10
+1 Bolter (ferrite) vs 14 hatchling               ALIENS WIN    10.8s  turret HP 0   aliens left 14/14
 ```
 
 ## 6. Tutorial## 6. Tutorial (Landing Site)

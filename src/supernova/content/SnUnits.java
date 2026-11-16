@@ -4,7 +4,9 @@ import arc.struct.Seq;
 import mindustry.ai.types.BuilderAI;
 import mindustry.ai.types.MinerAI;
 import arc.graphics.Color;
+import mindustry.entities.bullet.BasicBulletType;
 import mindustry.entities.bullet.LaserBulletType;
+import mindustry.content.Fx;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
@@ -23,6 +25,8 @@ public final class SnUnits {
     public static UnitType surveyor;
     /** Cargo drone: carries Orbital Uplink cargo to the core. */
     public static UnitType hauler;
+    /** Combat line (built in the Foundry): light gunship, armored gunship, heavy beam gunship. */
+    public static UnitType sentry, warden, bastion;
 
     private SnUnits() {}
 
@@ -133,6 +137,122 @@ public final class SnUnits {
             engineSize = 2.8f;
 
             itemCapacity = 60;
+        }};
+
+        // ================= Combat line =================
+        Color cobalt = Color.valueOf("8fb0f0"), cobaltDark = Color.valueOf("5670b2");
+
+        // T1: fast, cheap gunship with twin cobalt bolts.
+        sentry = new UnitType("sentry") {{
+            constructor = UnitEntity::create;
+            flying = true;
+            health = 200f;
+            armor = 1f;
+            speed = 3f;
+            accel = 0.08f;
+            drag = 0.04f;
+            hitSize = 10f;
+            rotateSpeed = 10f;
+            engineOffset = 6f;
+            engineSize = 2f;
+            circleTarget = true;
+            weapons.add(new Weapon() {{
+                reload = 18f;
+                x = 3.5f;
+                y = 2f;
+                alternate = true;
+                shootSound = Sounds.shootLaser;
+                bullet = new BasicBulletType(3.6f, 9f) {{
+                    width = 6f;
+                    height = 10f;
+                    lifetime = 32f;
+                    backColor = cobaltDark;
+                    frontColor = cobalt;
+                    hitColor = cobalt;
+                    hitEffect = Fx.hitLaser;
+                }};
+            }});
+        }};
+
+        // T2: armored gunship; heavy ferrosteel slugs with splash.
+        warden = new UnitType("warden") {{
+            constructor = UnitEntity::create;
+            flying = true;
+            lowAltitude = true;
+            health = 560f;
+            armor = 4f;
+            speed = 2.2f;
+            accel = 0.06f;
+            drag = 0.04f;
+            hitSize = 14f;
+            rotateSpeed = 6f;
+            engineOffset = 8f;
+            engineSize = 2.8f;
+            weapons.add(new Weapon() {{
+                reload = 38f;
+                x = 5f;
+                y = 1f;
+                alternate = true;
+                shake = 1f;
+                shootSound = Sounds.shootLaser;
+                bullet = new BasicBulletType(3.2f, 26f) {{
+                    width = 9f;
+                    height = 13f;
+                    lifetime = 40f;
+                    splashDamage = 16f;
+                    splashDamageRadius = 22f;
+                    backColor = Color.valueOf("474c56");
+                    frontColor = Color.valueOf("c9cfda");
+                    hitColor = Color.valueOf("c9cfda");
+                    hitEffect = Fx.flakExplosion;
+                }};
+            }});
+        }};
+
+        // T3: heavy gunship with a conductium beam, for pushing into Alien bases.
+        bastion = new UnitType("bastion") {{
+            constructor = UnitEntity::create;
+            flying = true;
+            lowAltitude = true;
+            health = 1150f;
+            armor = 7f;
+            speed = 1.5f;
+            accel = 0.05f;
+            drag = 0.04f;
+            hitSize = 20f;
+            rotateSpeed = 4f;
+            engineOffset = 11f;
+            engineSize = 3.6f;
+            weapons.add(new Weapon() {{
+                reload = 60f;
+                x = 0f;
+                y = 8f;
+                mirror = false;
+                shake = 2f;
+                shootSound = Sounds.shootLaser;
+                bullet = new LaserBulletType(70f) {{
+                    length = 140f;
+                    width = 14f;
+                    colors = new Color[]{Color.valueOf("e0b04a").a(0.5f), Color.valueOf("e0b04a"), Color.white};
+                    hitColor = Color.valueOf("e0b04a");
+                }};
+            }});
+            weapons.add(new Weapon() {{
+                reload = 20f;
+                x = 8f;
+                y = -2f;
+                alternate = true;
+                shootSound = Sounds.shootLaser;
+                bullet = new BasicBulletType(3.6f, 10f) {{
+                    width = 6f;
+                    height = 10f;
+                    lifetime = 34f;
+                    backColor = cobaltDark;
+                    frontColor = cobalt;
+                    hitColor = cobalt;
+                    hitEffect = Fx.hitLaser;
+                }};
+            }});
         }};
     }
 }

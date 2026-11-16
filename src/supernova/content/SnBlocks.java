@@ -18,6 +18,17 @@ import mindustry.world.blocks.power.PowerNode;
 import mindustry.world.blocks.power.SolarGenerator;
 import mindustry.world.blocks.storage.CoreBlock;
 import mindustry.world.blocks.units.UnitFactory;
+import mindustry.world.blocks.defense.MendProjector;
+import mindustry.world.blocks.defense.turrets.LiquidTurret;
+import mindustry.world.blocks.defense.turrets.PowerTurret;
+import mindustry.world.blocks.distribution.OverflowGate;
+import mindustry.world.blocks.power.Battery;
+import mindustry.world.blocks.storage.StorageBlock;
+import mindustry.world.blocks.storage.Unloader;
+import mindustry.entities.bullet.BulletType;
+import mindustry.entities.bullet.LightningBulletType;
+import mindustry.content.StatusEffects;
+import mindustry.gen.Sounds;
 import mindustry.world.meta.BuildVisibility;
 import mindustry.world.blocks.environment.OreBlock;
 import mindustry.world.blocks.production.Drill;
@@ -49,6 +60,9 @@ public final class SnBlocks {
     public static Block droneBay;
     // Storage
     public static Block coreOutpost;
+    // Early-game expansion
+    public static Block pressureDrill, igniter, arcCoil, container, unloader, overflowGate, underflowGate,
+        battery, largePowerNode, mender, foundry;
 
     private SnBlocks() {}
 
@@ -246,6 +260,128 @@ public final class SnBlocks {
             itemCapacity = 4000;
             size = 3;
             unitCapModifier = 8;
+        }};
+
+        // ================= Early-game expansion =================
+
+        pressureDrill = new Drill("pressure-drill") {{
+            requirements(Category.production, with(ferrite, 40, ferrosteel, 30, cobaltine, 20));
+            size = 3;
+            tier = 3;
+            drillTime = 400f;
+            consumePower(0.4f);
+            liquidBoostIntensity = 1.6f;
+            consumeLiquid(volatiles, 4f / 60f).boost();
+        }};
+
+        // Short-range flamethrower fuelled by volatiles. Pierces: built for Hatchling swarms.
+        igniter = new LiquidTurret("igniter") {{
+            requirements(Category.turret, with(ferrite, 30, ferrosteel, 20, cobaltine, 15));
+            size = 1;
+            health = 400;
+            range = 100f; // must out-range Hatchlings (96), or they shoot it from outside its reach
+            reload = 6f;
+            rotateSpeed = 10f;
+            shootCone = 40f;
+            targetAir = false;
+            shootSound = Sounds.none;
+            extinguish = false;
+            ammo(volatiles, new BulletType(4f, 18f) {{
+                ammoMultiplier = 3f;
+                hitSize = 7f;
+                lifetime = 25f;
+                pierce = true;
+                pierceBuilding = true;
+                pierceCap = 3;
+                statusDuration = 60f * 4f;
+                status = StatusEffects.burning;
+                shootEffect = Fx.shootSmallFlame;
+                hitEffect = Fx.hitFlameSmall;
+                despawnEffect = Fx.none;
+                keepVelocity = false;
+                hittable = false;
+            }});
+        }};
+
+        // Chain-lightning power turret; the first defensive use of conductium.
+        arcCoil = new PowerTurret("arc-coil") {{
+            requirements(Category.turret, with(ferrosteel, 40, conductium, 30, cobaltine, 50));
+            size = 1;
+            health = 500;
+            range = 110f; // out-ranges Hatchlings (96)
+            reload = 34f;
+            rotateSpeed = 8f;
+            shootCone = 40f;
+            targetAir = false;
+            shootSound = Sounds.shootLaser;
+            consumePower(3.3f);
+            shootType = new LightningBulletType() {{
+                damage = 22f;
+                lightningLength = 26;
+                collidesAir = false;
+                ammoMultiplier = 1f;
+                lightningColor = Color.valueOf("8fb0f0");
+            }};
+        }};
+
+        container = new StorageBlock("container") {{
+            requirements(Category.effect, with(ferrite, 60, ferrosteel, 40));
+            size = 2;
+            itemCapacity = 300;
+            health = 400;
+        }};
+
+        unloader = new Unloader("unloader") {{
+            requirements(Category.effect, with(ferrosteel, 25, conductium, 15));
+            speed = 60f / 11f;
+            health = 70;
+        }};
+
+        overflowGate = new OverflowGate("overflow-gate") {{
+            requirements(Category.distribution, with(ferrite, 4, cobaltine, 2));
+            buildCostMultiplier = 3f;
+        }};
+
+        underflowGate = new OverflowGate("underflow-gate") {{
+            requirements(Category.distribution, with(ferrite, 4, cobaltine, 2));
+            buildCostMultiplier = 3f;
+            invert = true;
+        }};
+
+        battery = new Battery("battery") {{
+            requirements(Category.power, with(ferrite, 10, cobaltine, 20));
+            consumePowerBuffered(1000f);
+            baseExplosiveness = 1f;
+        }};
+
+        largePowerNode = new PowerNode("large-power-node") {{
+            requirements(Category.power, with(ferrosteel, 10, cobaltine, 15, conductium, 3));
+            size = 2;
+            maxNodes = 15;
+            laserRange = 15f;
+        }};
+
+        mender = new MendProjector("mender") {{
+            requirements(Category.effect, with(ferrite, 25, cobaltine, 10));
+            health = 80;
+            reload = 200f;
+            range = 40f;
+            healPercent = 12f;
+            phaseBoost = 4f;
+            phaseRangeBoost = 20f;
+            consumePower(0.3f);
+            consumeItem(quartzite).boost();
+        }};
+
+        foundry = new UnitFactory("foundry") {{
+            requirements(Category.units, with(ferrite, 120, cobaltine, 80, ferrosteel, 60));
+            size = 3;
+            consumePower(1.5f);
+            plans.add(
+                new UnitPlan(SnUnits.sentry, 60f * 25f, with(ferrite, 20, cobaltine, 15)),
+                new UnitPlan(SnUnits.warden, 60f * 40f, with(ferrosteel, 30, cobaltine, 30)),
+                new UnitPlan(SnUnits.bastion, 60f * 60f, with(ferrosteel, 50, conductium, 30))
+            );
         }};
     }
 }

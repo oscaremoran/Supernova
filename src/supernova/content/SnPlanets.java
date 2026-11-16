@@ -61,6 +61,7 @@ public final class SnPlanets {
             SnItems.cryoIce, SnItems.conductium,
             SnLiquids.volatiles,
             SnUnits.pioneer, SnUnits.prospector, SnUnits.surveyor, SnUnits.hauler,
+            SnUnits.sentry, SnUnits.warden, SnUnits.bastion,
             SnAliens.hatchling, SnAliens.malign, SnAliens.leacher, SnAliens.ripper
         }) {
             c.shownPlanets.add(aphelion);
