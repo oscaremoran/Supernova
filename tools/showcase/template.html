@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supernova: what's new</title>
+<style>
+  :root { --bg:#14121a; --panel:#1e1b26; --ink:#e8e4f0; --dim:#9a93a8; --bug:#b98cff; --pred:#ff4d6a; --cobalt:#8fb0f0; --gold:#e0b04a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { padding:40px 24px 16px; max-width:1000px; margin:0 auto; }
+  h1 { margin:0 0 6px; font-size:34px; letter-spacing:.5px; }
+  h1 span { color:var(--bug); }
+  header p { color:var(--dim); margin:0; }
+  main { max-width:1000px; margin:0 auto; padding:0 24px 60px; }
+  section { background:var(--panel); border-radius:12px; padding:20px; margin:22px 0; }
+  h2 { margin:0 0 4px; font-size:21px; }
+  .sub { color:var(--dim); margin:0 0 14px; }
+  canvas { width:100%; display:block; border-radius:8px; background:#2a2730; image-rendering:pixelated; }
+  .row { display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+  button { background:#2f2a3b; color:var(--ink); border:1px solid #403852; border-radius:8px; padding:7px 14px; font:inherit; cursor:pointer; }
+  button:hover { border-color:var(--bug); }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; color:var(--dim); font-size:13px; margin-top:10px; }
+  .sw { display:inline-block; width:12px; height:12px; border-radius:3px; vertical-align:-1px; margin-right:6px; }
+  .tag { display:inline-block; font-size:12px; padding:1px 8px; border-radius:99px; margin-left:8px; vertical-align:3px; }
+  .bug { background:#3a2d5c; color:var(--bug); } .pred { background:#4a2230; color:var(--pred); } .you { background:#23314f; color:var(--cobalt); }
+  .note { color:var(--dim); font-size:13px; margin-top:10px; }
+  #mapimg { width:100%; max-width:600px; image-rendering:pixelated; border-radius:8px; display:block; margin:0 auto; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Supernova <span>· what's new</span></h1>
+  <p>Animated recreations of the latest additions, drawn with the mod's real sprites. Behaviour and numbers match the game; effects are close approximations.</p>
+</header>
+<main>
+
+<section>
+  <h2>Acid death bursts <span class="tag bug">Bugs</span><span class="tag pred">Predators</span></h2>
+  <p class="sub">Every Alien bursts into acid when it dies: violet for Bugs, crimson for Predators. Click an Alien to pop it.</p>
+  <canvas id="c-burst" width="900" height="260"></canvas>
+  <div class="row"><button id="b-burst">Pop them all</button></div>
+</section>
+
+<section>
+  <h2>Bugs swarm exposed buildings <span class="tag bug">Hatchling · Malign</span></h2>
+  <p class="sub">Bugs march to your core, but break off to eat any building within ~14 tiles that they have a clear line to. The Bolter guards the path; the lone drill up top does not.</p>
+  <canvas id="c-swarm" width="900" height="330"></canvas>
+  <div class="row"><button id="b-swarm">Restart</button></div>
+</section>
+
+<section>
+  <h2>Hives spread <span class="tag bug">Hive</span></h2>
+  <p class="sub">Left alone, a Hive buds a new one 9–15 tiles away every 4 minutes. It stops at 3 per cluster (12 per map), and never buds within 12 tiles of your buildings. Time-lapse: 4 game minutes ≈ 3 seconds.</p>
+  <canvas id="c-hive" width="900" height="360"></canvas>
+  <div class="legend"><span><span class="sw" style="background:#6a3fd1"></span>Hive</span><span><span class="sw" style="background:rgba(143,176,240,.35)"></span>No-bud zone around your buildings</span><span><span class="sw" style="background:#b98cff"></span>Hatchlings (max 3 per Hive)</span></div>
+  <div class="row"><button id="b-hive">Restart</button></div>
+</section>
+
+<section>
+  <h2>Predators hunt the wounded <span class="tag pred">Leacher · Ripper</span></h2>
+  <p class="sub">Predators always shoot the most damaged unit in range. Watch the red line: it jumps to whichever Sentry has the lowest health.</p>
+  <canvas id="c-pred" width="900" height="300"></canvas>
+  <div class="row"><button id="b-pred">Restart</button></div>
+</section>
+
+<section>
+  <h2>Gunships break an Alien base <span class="tag you">Sentry · Warden · Bastion</span></h2>
+  <p class="sub">Built in the Foundry. In the simulator, 2 Bastions destroy an Acid Spire and two Acid Pods without losses.</p>
+  <canvas id="c-siege" width="900" height="300"></canvas>
+  <div class="row"><button id="b-siege">Restart</button></div>
+</section>
+
+<section>
+  <h2>Igniter and Arc Coil vs a swarm <span class="tag you">new turrets</span></h2>
+  <p class="sub">The Igniter (left) burns Volatiles: its flames pierce and set Bugs on fire, and one beat 14 Hatchlings in testing. The Arc Coil (right) throws chain lightning on power alone.</p>
+  <canvas id="c-turret" width="900" height="300"></canvas>
+  <div class="row"><button id="b-turret">Restart</button></div>
+</section>
+
+<section>
+  <h2>Landing Site map</h2>
+  <p class="sub">The first hand-made map (150×150). Your core sits bottom-left beside ferrite; the Aliens spawn top-right and follow one winding path with a chokepoint halfway.</p>
+  <img id="mapimg" alt="Landing Site map">
+  <div class="legend">
+    <span><span class="sw" style="background:#ffd37f"></span>Your core</span>
+    <span><span class="sw" style="background:#ff3030"></span>Alien spawn</span>
+    <span><span class="sw" style="background:#b08a6e"></span>Ferrite</span>
+    <span><span class="sw" style="background:#4f74c9"></span>Cobaltine</span>
+    <span><span class="sw" style="background:#e8b7c4"></span>Quartzite</span>
+    <span><span class="sw" style="background:#2c4d7a"></span>Frozen lake</span>
+    <span><span class="sw" style="background:#3d3a40"></span>Walls</span>
+  </div>
+</section>
+
+</main>
+<script>
+const SPR = __SPRITES__;
+const img = {};
+let loaded = 0;
+const names = Object.keys(SPR);
+for (const k of names) { const i = new Image(); i.onload = () => { if (++loaded === names.length) start(); }; i.src = SPR[k]; img[k] = i; }
+document.getElementById('mapimg').src = SPR.map;
+
+const BUG = '#b98cff', BUG_D = '#6a3fd1', PRED = '#ff4d6a', PRED_D = '#a3203a', COBALT = '#8fb0f0', COBALT_D = '#5670b2', GOLD = '#e0b04a';
+const TAU = Math.PI * 2;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+// ---------------------------------------------------------------- shared drawing
+function setup(id) {
+  const c = document.getElementById(id), g = c.getContext('2d');
+  g.imageSmoothingEnabled = false;
+  return { c, g, W: c.width, H: c.height, fx: [], shots: [] };
+}
+function floor(s, seed) {
+  const { g, W, H } = s;
+  g.fillStyle = '#3b3842'; g.fillRect(0, 0, W, H);
+  let r = seed || 7;
+  const rand = () => (r = (r * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 70; i++) { g.fillStyle = rand() > .5 ? '#433f4a' : '#35323b'; const x = rand() * W, y = rand() * H, w = 20 + rand() * 60; g.fillRect(x, y, w, w * .5); }
+}
+function sprite(g, im, x, y, scale, rot) {
+  g.save(); g.translate(x, y); g.rotate((rot || 0) + Math.PI / 2);
+  g.drawImage(im, -im.width * scale / 2, -im.height * scale / 2, im.width * scale, im.height * scale); g.restore();
+}
+function legs(g, x, y, n, len, rot, t, color) {
+  g.strokeStyle = '#1e1a24'; g.lineWidth = Math.max(2, len / 6);
+  for (let i = 0; i < n; i++) {
+    const a = rot + (i / n) * TAU + Math.PI / n;
+    const swing = Math.sin(t * 8 + i * 2) * .25;
+    const jx = x + Math.cos(a + swing) * len * .6, jy = y + Math.sin(a + swing) * len * .6;
+    const fx = x + Math.cos(a + swing * 1.5) * len, fy = y + Math.sin(a + swing * 1.5) * len;
+    g.beginPath(); g.moveTo(x, y); g.lineTo(jx, jy); g.lineTo(fx, fy); g.stroke();
+    g.fillStyle = color; g.beginPath(); g.arc(jx, jy, 1.6, 0, TAU); g.fill();
+  }
+}
+function bar(g, x, y, w, frac, color) {
+  g.fillStyle = '#000a'; g.fillRect(x - w / 2, y, w, 4);
+  g.fillStyle = color; g.fillRect(x - w / 2, y, w * Math.max(0, frac), 4);
+}
+// effects
+function burst(s, x, y, glow, dark, size) {
+  const drops = []; const n = 8 + size;
+  for (let i = 0; i < n; i++) drops.push({ a: rnd(0, TAU), d: rnd(.4, 1) * size * 2.8 });
+  s.fx.push({ t: 0, life: 40, draw(g, f) {
+    const fin = f, fout = 1 - f;
+    g.globalAlpha = fout * .6; g.fillStyle = glow; g.beginPath(); g.arc(x, y, size * .9 * (1 - fin * fin) * 1.2, 0, TAU); g.fill();
+    g.globalAlpha = 1; g.fillStyle = mix(glow, dark, fin);
+    for (const d of drops) { g.beginPath(); g.arc(x + Math.cos(d.a) * d.d * Math.sqrt(fin), y + Math.sin(d.a) * d.d * Math.sqrt(fin), (1.6 + size * .12) * fout * 1.4, 0, TAU); g.fill(); }
+    g.globalAlpha = fout; g.strokeStyle = glow; g.lineWidth = 2 * fout; g.beginPath(); g.arc(x, y, size * 2.4 * Math.sqrt(fin), 0, TAU); g.stroke();
+    glowAt(g, x, y, size * 4 * fout, glow, .5 * fout); g.globalAlpha = 1;
+  }});
+}
+function splash(s, x, y, ang, glow, dark) {
+  const drops = []; for (let i = 0; i < 5; i++) drops.push({ a: ang + Math.PI + rnd(-.6, .6), d: rnd(4, 10) });
+  s.fx.push({ t: 0, life: 18, draw(g, f) { g.fillStyle = mix(glow, dark, f); for (const d of drops) { g.beginPath(); g.arc(x + Math.cos(d.a) * d.d * f, y + Math.sin(d.a) * d.d * f, 1.8 * (1 - f), 0, TAU); g.fill(); } } });
+}
+function puff(s, x, y, ang, glow) {
+  const drops = []; for (let i = 0; i < 4; i++) drops.push({ a: ang + rnd(-.4, .4), d: rnd(3, 7) });
+  s.fx.push({ t: 0, life: 14, draw(g, f) { g.globalAlpha = 1 - f; g.fillStyle = glow; for (const d of drops) { g.beginPath(); g.arc(x + Math.cos(d.a) * d.d * f, y + Math.sin(d.a) * d.d * f, 1.5 * (1 - f), 0, TAU); g.fill(); } g.globalAlpha = 1; } });
+}
+function pulse(s, x, y) {
+  const spores = []; for (let i = 0; i < 12; i++) spores.push({ a: rnd(0, TAU), d: rnd(10, 34) });
+  s.fx.push({ t: 0, life: 50, draw(g, f) {
+    g.globalAlpha = 1 - f; g.strokeStyle = BUG; g.lineWidth = 3 * (1 - f); g.beginPath(); g.arc(x, y, 8 + 30 * Math.sqrt(f), 0, TAU); g.stroke();
+    g.fillStyle = mix(BUG, BUG_D, f); for (const p of spores) { g.beginPath(); g.arc(x + Math.cos(p.a) * p.d * Math.sqrt(f), y + Math.sin(p.a) * p.d * Math.sqrt(f), 2.2 * (1 - f), 0, TAU); g.fill(); }
+    glowAt(g, x, y, 60 * (1 - f), BUG, .6 * (1 - f)); g.globalAlpha = 1;
+  }});
+}
+function glowAt(g, x, y, r, color, a) {
+  if (r <= 0) return; const gr = g.createRadialGradient(x, y, 0, x, y, r);
+  gr.addColorStop(0, hexA(color, a)); gr.addColorStop(1, hexA(color, 0)); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill();
+}
+function hexA(h, a) { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; }
+function mix(a, b, t) { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16); const c = i => Math.round(((A >> i) & 255) * (1 - t) + ((B >> i) & 255) * t); return `rgb(${c(16)},${c(8)},${c(0)})`; }
+function runFx(s) { const { g } = s; s.fx = s.fx.filter(e => { e.t++; e.draw(g, e.t / e.life); return e.t < e.life; }); }
+// bullets: {x,y,vx,vy,life,color,dark,dmg,target,onHit}
+function shoot(s, from, to, speed, color, dark, dmg, opts = {}) {
+  const a = Math.atan2(to.y - from.y, to.x - from.x);
+  s.shots.push({ x: from.x, y: from.y, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, life: opts.life || 60, color, dark, dmg, target: to, a, r: opts.r || 2.5 });
+  puff(s, from.x + Math.cos(a) * 8, from.y + Math.sin(a) * 8, a, color);
+}
+function runShots(s) {
+  const { g } = s;
+  s.shots = s.shots.filter(b => {
+    b.x += b.vx; b.y += b.vy; b.life--;
+    g.fillStyle = b.dark; g.beginPath(); g.arc(b.x, b.y, b.r + 1, 0, TAU); g.fill();
+    g.fillStyle = b.color; g.beginPath(); g.arc(b.x, b.y, b.r, 0, TAU); g.fill();
+    if (b.target && b.target.hp > 0 && dist(b, b.target) < (b.target.size || 10)) {
+      b.target.hp -= b.dmg; b.target.flash = 6; splash(s, b.x, b.y, b.a, b.color, b.dark); return false;
+    }
+    return b.life > 0;
+  });
+}
+function loop(fn) { let t = 0; const tick = () => { t++; fn(t); requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+
+// ---------------------------------------------------------------- scenes
+function start() { sceneBurst(); sceneSwarm(); sceneHive(); scenePred(); sceneSiege(); sceneTurret(); }
+
+const ALIENS = {
+  hatchling: { im: 'hatchling', legs: 4, len: 13, scale: 2, glow: BUG, dark: BUG_D, size: 6 },
+  malign: { im: 'malign', legs: 4, len: 20, scale: 1.6, glow: BUG, dark: BUG_D, size: 10 },
+  leacher: { im: 'leacher', legs: 6, len: 22, scale: 1.5, glow: PRED, dark: PRED_D, size: 11 },
+  ripper: { im: 'ripper', legs: 6, len: 28, scale: 1.4, glow: PRED, dark: PRED_D, size: 15 },
+};
+function drawAlien(g, a, t) {
+  const k = ALIENS[a.kind];
+  legs(g, a.x, a.y, k.legs, k.len, a.rot, t / 60 + a.phase, k.glow);
+  sprite(g, img[k.im], a.x, a.y, k.scale, a.rot);
+  if (a.flash > 0) { a.flash--; glowAt(g, a.x, a.y, 16, '#ffffff', .35); }
+}
+
+function sceneBurst() {
+  const s = setup('c-burst');
+  const kinds = ['hatchling', 'malign', 'leacher', 'ripper'];
+  let aliens = [];
+  const reset = () => { aliens = kinds.map((k, i) => ({ kind: k, x: 130 + i * 210, y: 130, rot: -Math.PI / 2, phase: i, dead: 0 })); };
+  reset();
+  const pop = a => { if (a.dead) return; const k = ALIENS[a.kind]; burst(s, a.x, a.y, k.glow, k.dark, k.size); a.dead = 110; };
+  s.c.addEventListener('click', e => {
+    const r = s.c.getBoundingClientRect(), x = (e.clientX - r.left) * s.W / r.width, y = (e.clientY - r.top) * s.H / r.height;
+    for (const a of aliens) if (Math.hypot(a.x - x, a.y - y) < 50) pop(a);
+  });
+  document.getElementById('b-burst').onclick = () => aliens.forEach((a, i) => setTimeout(() => pop(a), i * 120));
+  let next = 120;
+  loop(t => {
+    floor(s, 3); const { g } = s;
+    if (--next <= 0) { const live = aliens.filter(a => !a.dead); if (live.length) pop(live[Math.floor(Math.random() * live.length)]); next = 90; }
+    for (const a of aliens) {
+      if (a.dead) { if (--a.dead === 0) a.y = 130; continue; }
+      a.y = 130 + Math.sin(t / 30 + a.phase) * 4;
+      drawAlien(g, a, t);
+      g.fillStyle = '#e8e4f0'; g.font = '13px system-ui'; g.textAlign = 'center';
+      g.fillText(a.kind[0].toUpperCase() + a.kind.slice(1), a.x, 225);
+    }
+    runFx(s);
+  });
+}
+
+function sceneSwarm() {
+  const s = setup('c-swarm');
+  let st;
+  const reset = () => {
+    s.fx = []; s.shots = [];
+    st = {
+      core: { x: 70, y: 220, hp: 1 },
+      bolter: { x: 300, y: 250, hp: 600, max: 600, size: 16, cd: 0 },
+      drill: { x: 560, y: 70, hp: 90, max: 90, size: 16, rot: 0 },
+      bugs: [], spawned: 0, t: 0,
+    };
+  };
+  reset();
+  document.getElementById('b-swarm').onclick = reset;
+  loop(t => {
+    floor(s, 11); const { g } = s;
+    // path
+    g.fillStyle = '#4a4652'; g.fillRect(40, 180, 860, 90);
+    g.fillStyle = '#26232b'; g.fillRect(40, 140, 860, 40); g.fillRect(40, 270, 860, 60);
+    g.fillRect(470, 0, 40, 140); g.fillRect(620, 0, 40, 140); // gap above leads to the drill
+    st.t++;
+    if (st.t % 70 === 0 && st.spawned < 9) { st.bugs.push({ kind: st.spawned % 4 === 3 ? 'malign' : 'hatchling', x: 880, y: rnd(200, 255), rot: Math.PI, phase: rnd(0, 6), hp: 1, cd: rnd(0, 20), mode: 'path' }); st.spawned++; }
+    // structures
+    if (st.drill.hp > 0) { st.drill.rot += .08; sprite(g, img.drill, st.drill.x, st.drill.y, 1, -Math.PI / 2); sprite(g, img.drillRot, st.drill.x, st.drill.y, 1, st.drill.rot); sprite(g, img.drillTop, st.drill.x, st.drill.y, 1, -Math.PI / 2); bar(g, st.drill.x, st.drill.y + 24, 40, st.drill.hp / st.drill.max, '#7fd17f'); if (st.drill.flash > 0) st.drill.flash--; }
+    sprite(g, img.coreOutpost, st.core.x, st.core.y, .9, -Math.PI / 2);
+    sprite(g, img.bolter, st.bolter.x, st.bolter.y, 1, st.bolter.rot || 0);
+    bar(g, st.bolter.x, st.bolter.y + 22, 40, st.bolter.hp / st.bolter.max, '#7fd17f');
+    g.fillStyle = '#e8e4f0'; g.font = '12px system-ui'; g.textAlign = 'center';
+    g.fillText(st.drill.hp > 0 ? 'lone drill' : 'drill eaten!', st.drill.x, st.drill.y - 26);
+    g.fillText('Bolter', st.bolter.x, st.bolter.y + 40); g.fillText('core', st.core.x, st.core.y + 44);
+    // bugs
+    for (const b of st.bugs) {
+      if (b.hp <= 0) continue;
+      const k = ALIENS[b.kind];
+      const prey = st.drill.hp > 0 && dist(b, st.drill) < 14 * 8 * 1.6 ? st.drill : null;
+      let goal, range = b.kind === 'malign' ? 125 : 96;
+      if (prey) { b.mode = 'dive'; goal = prey; } else { b.mode = 'path'; goal = dist(b, st.bolter) < range + 40 ? st.bolter : st.core; }
+      const d = dist(b, goal), a = Math.atan2(goal.y - b.y, goal.x - b.x);
+      if (d > range * .8) { b.x += Math.cos(a) * (b.kind === 'malign' ? .55 : .8); b.y += Math.sin(a) * (b.kind === 'malign' ? .55 : .8); }
+      b.rot = a;
+      if (--b.cd <= 0 && d < range && goal.hp > 0) { shoot(s, b, goal, 3.2, k.glow, k.dark, b.kind === 'malign' ? 14 : 4); b.cd = b.kind === 'malign' ? 48 : 16; }
+      drawAlien(g, b, t);
+      if (b.mode === 'dive') { g.strokeStyle = hexA(BUG, .35); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(b.x, b.y); g.lineTo(prey.x, prey.y); g.stroke(); g.setLineDash([]); }
+    }
+    // bolter
+    const tgt = st.bugs.filter(b => b.hp > 0 && dist(b, st.bolter) < 130).sort((a, b) => dist(a, st.bolter) - dist(b, st.bolter))[0];
+    if (tgt) { st.bolter.rot = Math.atan2(tgt.y - st.bolter.y, tgt.x - st.bolter.x); if (--st.bolter.cd <= 0) { shoot(s, st.bolter, tgt, 4, '#c9cfda', '#6f7682', 14 / 130); st.bolter.cd = 22; } }
+    runShots(s);
+    for (const b of st.bugs) if (b.hp <= 0 && !b.burst) { b.burst = 1; const k = ALIENS[b.kind]; burst(s, b.x, b.y, k.glow, k.dark, k.size); }
+    if (st.drill.hp <= 0 && !st.drill.gone) { st.drill.gone = 1; burst(s, st.drill.x, st.drill.y, '#b0a69e', '#5e5550', 12); }
+    runFx(s);
+    if (st.spawned >= 9 && st.bugs.every(b => b.hp <= 0) && !st.end) { st.end = 1; setTimeout(reset, 1800); }
+  });
+}
+
+function sceneHive() {
+  const s = setup('c-hive');
+  let st;
+  const TILE = 8;
+  const reset = () => { s.fx = []; st = { hives: [{ x: 520, y: 180, t: 0 }], minute: 0, frame: 0, bugs: [], capped: false }; pulse(s, 520, 180); };
+  reset();
+  document.getElementById('b-hive').onclick = reset;
+  const player = { x: 150, y: 190, r: 12 * TILE * 1.4 };
+  loop(t => {
+    floor(s, 21); const { g } = s;
+    // player base and no-bud zone
+    g.fillStyle = 'rgba(143,176,240,.13)'; g.beginPath(); g.arc(player.x, player.y, player.r + 60, 0, TAU); g.fill();
+    g.strokeStyle = 'rgba(143,176,240,.5)'; g.setLineDash([6, 6]); g.beginPath(); g.arc(player.x, player.y, player.r + 60, 0, TAU); g.stroke(); g.setLineDash([]);
+    sprite(g, img.coreOutpost, player.x, player.y, .8, -Math.PI / 2);
+    sprite(g, img.bolter, player.x + 70, player.y - 40, .9, 0);
+    sprite(g, img.bolter, player.x + 70, player.y + 40, .9, 0);
+    st.frame++;
+    const perMinute = 45; // frames per game minute
+    st.minute = st.frame / perMinute;
+    // budding every 4 minutes
+    if (st.frame % (perMinute * 4) === 0) {
+      if (st.hives.length >= 3) st.capped = true;
+      else for (let tries = 0; tries < 30; tries++) {
+        const from = st.hives[Math.floor(Math.random() * st.hives.length)];
+        const a = rnd(0, TAU), d = rnd(9, 15) * TILE * 1.4;
+        const x = from.x + Math.cos(a) * d, y = from.y + Math.sin(a) * d;
+        if (x < 40 || x > s.W - 40 || y < 40 || y > s.H - 40) continue;
+        if (Math.hypot(x - player.x, y - player.y) < player.r + 60 + 30) continue;
+        if (st.hives.some(h => Math.hypot(h.x - x, h.y - y) < 60)) continue;
+        st.hives.push({ x, y, t: 0 }); pulse(s, x, y); break;
+      }
+    }
+    // hatching every 40 s (2/3 of a game minute), max 3 per hive
+    for (const h of st.hives) {
+      h.t++;
+      if (h.t % Math.round(perMinute * 40 / 60) === 0 && st.bugs.filter(b => b.home === h).length < 3) {
+        const a = rnd(0, TAU); st.bugs.push({ kind: 'hatchling', home: h, x: h.x + Math.cos(a) * 34, y: h.y + Math.sin(a) * 34, rot: a, phase: rnd(0, 6), wander: a });
+        pulse(s, h.x, h.y);
+      }
+      const f = (h.t % 30) / 30;
+      sprite(g, img.hive, h.x, h.y, 1, -Math.PI / 2);
+      glowAt(g, h.x, h.y, 26, BUG, .25 + .15 * Math.sin(t / 10));
+    }
+    for (const b of st.bugs) {
+      b.wander += rnd(-.15, .15);
+      const dx = b.home.x - b.x, dy = b.home.y - b.y;
+      if (Math.hypot(dx, dy) > 70) b.wander = Math.atan2(dy, dx);
+      b.x += Math.cos(b.wander) * .5; b.y += Math.sin(b.wander) * .5; b.rot = b.wander;
+      drawAlien(g, b, t);
+    }
+    runFx(s);
+    g.fillStyle = '#000a'; g.fillRect(12, 12, 250, st.capped ? 56 : 34);
+    g.fillStyle = '#e8e4f0'; g.font = '15px system-ui'; g.textAlign = 'left';
+    g.fillText(`Game time: ${Math.floor(st.minute)} min  ·  Hives: ${st.hives.length}`, 22, 34);
+    if (st.capped) { g.fillStyle = BUG; g.fillText('Cluster cap reached (3)', 22, 56); }
+    if (st.minute > 20 && !st.end) { st.end = 1; setTimeout(reset, 2000); }
+  });
+}
+
+function scenePred() {
+  const s = setup('c-pred');
+  let st;
+  const reset = () => {
+    s.fx = []; s.shots = [];
+    st = {
+      sentries: [0, 1, 2, 3].map(i => ({ x: 200 + (i % 2) * 70, y: 70 + i * 55, hp: [200, 80, 150, 120][i], max: 200, size: 12, rot: 0, bob: i, cd: rnd(0, 18) })),
+      preds: [{ kind: 'leacher', x: 700, y: 110, rot: Math.PI, phase: 0, hp: 520, max: 520, cd: 0 }, { kind: 'ripper', x: 740, y: 210, rot: Math.PI, phase: 2, hp: 1100, max: 1100, cd: 60, beam: 0 }],
+    };
+  };
+  reset();
+  document.getElementById('b-pred').onclick = reset;
+  loop(t => {
+    floor(s, 33); const { g } = s;
+    const live = st.sentries.filter(u => u.hp > 0);
+    for (const p of st.preds) {
+      if (p.hp <= 0) continue;
+      const range = p.kind === 'leacher' ? 300 : 340;
+      const target = live.filter(u => dist(u, p) < range).sort((a, b) => a.hp / a.max - b.hp / b.max)[0];
+      if (target) {
+        p.rot = Math.atan2(target.y - p.y, target.x - p.x);
+        g.strokeStyle = hexA(PRED, .55); g.setLineDash([5, 5]); g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(target.x, target.y); g.stroke(); g.setLineDash([]);
+        if (p.kind === 'leacher') { if (--p.cd <= 0) { shoot(s, p, target, 4, PRED, PRED_D, 9); p.cd = 30; } }
+        else {
+          p.cd--;
+          if (p.cd <= 0) { p.beam = 70; p.cd = 170; }
+          if (p.beam > 0) {
+            p.beam--; target.hp -= .35; target.flash = 2;
+            const w = 4 + Math.sin(t / 2) * 1.5;
+            for (const [c, ww] of [[hexA(PRED_D, .5), w * 2.4], [PRED, w], ['#ffffff', w * .4]]) { g.strokeStyle = c; g.lineWidth = ww; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(target.x, target.y); g.stroke(); }
+            glowAt(g, target.x, target.y, 20, PRED, .6);
+          }
+        }
+      }
+      drawAlien(g, p, t);
+      bar(g, p.x, p.y + 30, 50, p.hp / p.max, PRED);
+    }
+    for (const u of st.sentries) {
+      if (u.hp <= 0) { if (!u.gone) { u.gone = 1; burst(s, u.x, u.y, COBALT, COBALT_D, 9); } continue; }
+      u.y += Math.sin(t / 25 + u.bob) * .3;
+      const foe = st.preds.find(p => p.hp > 0);
+      if (foe) { u.rot = Math.atan2(foe.y - u.y, foe.x - u.x); if (--u.cd <= 0) { shoot(s, u, foe, 4.5, COBALT, COBALT_D, 9); u.cd = 18; } }
+      sprite(g, img.sentry, u.x, u.y, 1.6, u.rot);
+      if (u.flash > 0) { u.flash--; glowAt(g, u.x, u.y, 14, '#ffffff', .3); }
+      bar(g, u.x, u.y + 22, 36, u.hp / u.max, u.hp / u.max < .5 ? '#ff9a6b' : '#7fd17f');
+    }
+    runShots(s);
+    for (const p of st.preds) if (p.hp <= 0 && !p.gone) { p.gone = 1; const k = ALIENS[p.kind]; burst(s, p.x, p.y, k.glow, k.dark, k.size); }
+    runFx(s);
+    g.fillStyle = '#e8e4f0'; g.font = '13px system-ui'; g.textAlign = 'left';
+    g.fillText('Red dashed line = who each Predator is targeting (always the lowest health %)', 14, s.H - 14);
+    if ((live.length === 0 || st.preds.every(p => p.hp <= 0)) && !st.end) { st.end = 1; setTimeout(reset, 1800); }
+  });
+}
+
+function sceneSiege() {
+  const s = setup('c-siege');
+  let st;
+  const reset = () => {
+    s.fx = []; s.shots = [];
+    st = {
+      ships: [{ x: 60, y: 110, hp: 1150, max: 1150, cd: 30, rot: 0, beam: 0, size: 18 }, { x: 40, y: 190, hp: 1150, max: 1150, cd: 50, rot: 0, beam: 0, size: 18 }],
+      base: [
+        { im: 'acidSpire', x: 720, y: 150, hp: 1100, max: 1100, scale: 1, cd: 0, range: 125 * 1.6, size: 20, rot: Math.PI },
+        { im: 'acidPod', x: 650, y: 80, hp: 420, max: 420, scale: 1.2, cd: 0, range: 110 * 1.6, size: 12, rot: Math.PI },
+        { im: 'acidPod', x: 650, y: 220, hp: 420, max: 420, scale: 1.2, cd: 10, range: 110 * 1.6, size: 12, rot: Math.PI },
+      ],
+    };
+  };
+  reset();
+  document.getElementById('b-siege').onclick = reset;
+  loop(t => {
+    floor(s, 44); const { g } = s;
+    sprite(g, img.chitin, 780, 150, 1.2, -Math.PI / 2);
+    sprite(g, img.coreBrood, 840, 150, .9, -Math.PI / 2);
+    for (const b of st.base) {
+      if (b.hp <= 0) { if (!b.gone) { b.gone = 1; burst(s, b.x, b.y, BUG, BUG_D, 14); } continue; }
+      const target = st.ships.filter(u => u.hp > 0 && dist(u, b) < b.range).sort((a, c) => dist(a, b) - dist(c, b))[0];
+      if (target) { b.rot = Math.atan2(target.y - b.y, target.x - b.x); if (--b.cd <= 0) { shoot(s, b, target, 3, BUG, BUG_D, b.im === 'acidSpire' ? 40 : 11); b.cd = b.im === 'acidSpire' ? 70 : 26; } }
+      g.fillStyle = '#4a4652'; g.fillRect(b.x - 18, b.y - 18, 36, 36);
+      sprite(g, img[b.im], b.x, b.y, b.scale, b.rot);
+      if (b.flash > 0) { b.flash--; glowAt(g, b.x, b.y, 18, '#ffffff', .3); }
+      bar(g, b.x, b.y + 26, 40, b.hp / b.max, BUG);
+    }
+    for (const u of st.ships) {
+      if (u.hp <= 0) continue;
+      const target = st.base.filter(b => b.hp > 0).sort((a, b) => dist(a, u) - dist(b, u))[0];
+      if (target) {
+        u.rot = Math.atan2(target.y - u.y, target.x - u.x);
+        if (dist(u, target) > 200) { u.x += Math.cos(u.rot) * 1.2; u.y += Math.sin(u.rot) * 1.2; }
+        if (--u.cd <= 0 && dist(u, target) < 230) { u.beam = 14; u.cd = 60; target.hp -= 70; target.flash = 6; }
+        if (u.beam > 0) {
+          u.beam--;
+          for (const [c, w] of [[hexA(GOLD, .5), 12], [GOLD, 6], ['#ffffff', 2]]) { g.strokeStyle = c; g.lineWidth = w * (u.beam / 14); g.beginPath(); g.moveTo(u.x, u.y); g.lineTo(target.x, target.y); g.stroke(); }
+          glowAt(g, target.x, target.y, 26, GOLD, .7 * u.beam / 14);
+        }
+      }
+      sprite(g, img.bastion, u.x, u.y, 1.4, u.rot);
+      if (u.flash > 0) { u.flash--; glowAt(g, u.x, u.y, 18, '#ffffff', .3); }
+      bar(g, u.x, u.y + 34, 50, u.hp / u.max, '#7fd17f');
+    }
+    runShots(s); runFx(s);
+    g.fillStyle = '#e8e4f0'; g.font = '13px system-ui'; g.textAlign = 'center';
+    g.fillText('Bastions', 90, s.H - 14); g.fillText('Acid Pods · Acid Spire · Chitin Wall · Core: Brood', 730, s.H - 14);
+    if (st.base.every(b => b.hp <= 0) && !st.end) { st.end = 1; setTimeout(reset, 2200); }
+  });
+}
+
+function sceneTurret() {
+  const s = setup('c-turret');
+  let st;
+  const reset = () => {
+    s.fx = []; s.shots = [];
+    const bugs = [];
+    for (let i = 0; i < 14; i++) bugs.push({ kind: 'hatchling', lane: i % 2, x: 430 + Math.random() * 30 + (i >> 1) * 22, y: 70 + (i % 7) * 26 + (i % 2) * 8, rot: Math.PI, phase: rnd(0, 6), hp: 130, burn: 0, cd: rnd(0, 16) });
+    st = { bugs, ign: { x: 70, y: 150, rot: 0 }, arc: { x: 830, y: 150, rot: Math.PI, cd: 0 }, bolts: [] };
+    for (const b of bugs) { b.target = b.x < 450 + 60 ? 'ign' : 'arc'; }
+    bugs.forEach((b, i) => { b.target = i % 2 ? 'ign' : 'arc'; b.x = b.target === 'ign' ? 330 + (i >> 1) * 14 : 570 - (i >> 1) * 14; b.rot = b.target === 'ign' ? Math.PI : 0; });
+  };
+  reset();
+  document.getElementById('b-turret').onclick = reset;
+  loop(t => {
+    floor(s, 55); const { g } = s;
+    g.fillStyle = '#26232b'; g.fillRect(448, 0, 4, s.H);
+    const { ign, arc } = st;
+    // Igniter: flame cone at the nearest bug within 100*1.6
+    const fireRange = 160;
+    const ft = st.bugs.filter(b => b.hp > 0 && b.target === 'ign' && dist(b, ign) < fireRange).sort((a, b) => dist(a, ign) - dist(b, ign))[0];
+    if (ft) {
+      ign.rot = Math.atan2(ft.y - ign.y, ft.x - ign.x);
+      for (let i = 0; i < 6; i++) {
+        const a = ign.rot + rnd(-.18, .18), d = rnd(10, fireRange);
+        g.fillStyle = mix('#ffd08a', '#ff5a2a', d / fireRange); g.globalAlpha = 1 - d / fireRange * .7;
+        g.beginPath(); g.arc(ign.x + Math.cos(a) * d, ign.y + Math.sin(a) * d, 3 + d / 30, 0, TAU); g.fill();
+      }
+      g.globalAlpha = 1;
+      // pierce up to 3 bugs in the cone
+      st.bugs.filter(b => b.hp > 0 && b.target === 'ign' && dist(b, ign) < fireRange && Math.abs(Math.atan2(b.y - ign.y, b.x - ign.x) - ign.rot) < .3)
+        .sort((a, b) => dist(a, ign) - dist(b, ign)).slice(0, 3).forEach(b => { b.hp -= 2.2; b.burn = 240; });
+    }
+    sprite(g, img.igniter, ign.x, ign.y, 1.6, ign.rot);
+    // Arc Coil: lightning every 34 frames
+    const lt = st.bugs.filter(b => b.hp > 0 && b.target === 'arc' && dist(b, arc) < 176).sort((a, b) => dist(a, arc) - dist(b, arc))[0];
+    if (lt && --arc.cd <= 0) {
+      arc.cd = 34; arc.rot = Math.atan2(lt.y - arc.y, lt.x - arc.x);
+      const pts = [{ x: arc.x, y: arc.y }]; let x = arc.x, y = arc.y, a = arc.rot;
+      for (let i = 0; i < 12; i++) { a += rnd(-.6, .6); x += Math.cos(a) * 14; y += Math.sin(a) * 14; pts.push({ x, y }); st.bugs.forEach(b => { if (b.hp > 0 && b.target === 'arc' && Math.hypot(b.x - x, b.y - y) < 14) { b.hp -= 22; b.flash = 6; } }); }
+      st.bolts.push({ pts, life: 12 });
+    }
+    st.bolts = st.bolts.filter(bl => { g.strokeStyle = hexA(COBALT, bl.life / 12); g.lineWidth = 2.5; g.beginPath(); bl.pts.forEach((p, i) => i ? g.lineTo(p.x, p.y) : g.moveTo(p.x, p.y)); g.stroke(); return --bl.life > 0; });
+    sprite(g, img.arcCoil, arc.x, arc.y, 1.6, arc.rot);
+    // bugs
+    for (const b of st.bugs) {
+      if (b.hp <= 0) { if (!b.gone) { b.gone = 1; burst(s, b.x, b.y, BUG, BUG_D, 6); } continue; }
+      const tur = st[b.target]; const a = Math.atan2(tur.y - b.y, tur.x - b.x);
+      if (dist(b, tur) > 150) { b.x += Math.cos(a) * .8; b.y += Math.sin(a) * .8; }
+      b.rot = a;
+      if (b.burn > 0) { b.burn--; b.hp -= .08; if (t % 4 === 0) { g.fillStyle = '#ff8a3d'; g.beginPath(); g.arc(b.x + rnd(-6, 6), b.y + rnd(-6, 6), 2, 0, TAU); g.fill(); } }
+      drawAlien(g, b, t);
+    }
+    runFx(s);
+    g.fillStyle = '#e8e4f0'; g.font = '13px system-ui'; g.textAlign = 'center';
+    g.fillText('Igniter', ign.x, s.H - 14); g.fillText('Arc Coil', arc.x, s.H - 14);
+    if (st.bugs.every(b => b.hp <= 0) && !st.end) { st.end = 1; setTimeout(reset, 1800); }
+  });
+}
+</script>
+</body>
+</html>
