@@ -286,6 +286,16 @@ Core: Outpost
 
 Each sector activates automatically once its map file is in `assets/maps/`. Until then, that spot on the globe stays procedural.
 
+Maps are built in code by `tools/mapmaker/` (one class per map, e.g. `LandingSite.java`), which saves a real `.msav` and a preview image to `docs/maps/`. To rebuild:
+
+```sh
+./gradlew modJar
+javac -cp "$GAME:build/classes/java/main" -d build/mapmaker tools/mapmaker/*.java
+java  -cp "$GAME:build/classes/java/main:build/mapmaker" MapMaker landing-site
+```
+
+**Status:** ✅ Landing Site map made (preview: `docs/maps/landing-site.png`). The others are still procedural.
+
 | # | Sector | Map file | Globe sector | Win | Waves |
 |---|---|---|---|---|---|
 | 1 | Landing Site | `landing-site.msav` | 15 (start) | Survive 15 waves | Hatchlings only; first wave 3× later than normal |
